@@ -1,10 +1,10 @@
-package buildings;
+package buildings.dwelling;
 
-/**
- * Добавлено поле size, изменены конструкторы и методы
- */
+import interfaces.Building;
+import interfaces.Floor;
+import interfaces.Space;
 
-public class Dwelling {
+public class Dwelling implements Building {
 
     DwellingFloor[] dwellingFloors;
     private int size;
@@ -26,15 +26,15 @@ public class Dwelling {
     }
 
     //метод получения общего количества этажей дома
-    public int getAllDwellingOfBuild() {
+    public int getSize() {
         return size;
     }
 
     //метод получения общего количества квартир дома
-    public int getAllFlatsOfBuild() {
+    public int getSpaces() {
         int countFlatsOfBuild = 0;
         for (int i = 0; i < size; i++) {
-            for (int j = 0; j < dwellingFloors[i].getCountOfFlats(); j++) {
+            for (int j = 0; j < dwellingFloors[i].getSize(); j++) {
                 countFlatsOfBuild++;
             }
         }
@@ -42,45 +42,43 @@ public class Dwelling {
     }
 
     //метод получения общей площади квартир дома
-    public int getAllSquareFlatsBuild() {
+    public int getSquare() {
         int squareFlatsBuild = 0;
         for (int j = 0; j < dwellingFloors.length; j++) {
-            squareFlatsBuild += dwellingFloors[j].getAllSquareOfDwelling();
+            squareFlatsBuild += dwellingFloors[j].getSquare();
         }
         return squareFlatsBuild;
     }
 
     //метод получения общего количества комнат дома
-    public int getAllRoomsBuild() {
+    public int getRooms() {
         int countRooms = 0;
         for (int i = 0; i < size; i++) {
-            countRooms += dwellingFloors[i].getAllRoomsOfDwelling();
+            countRooms += dwellingFloors[i].getRooms();
         }
         return countRooms;
     }
 
     //метод получения массива этажей жилого дома
-    public DwellingFloor[] getDwellindFloorOfBuild() {
+    public DwellingFloor[] getArrayOfSpaces() {
         return dwellingFloors;
     }
 
-
-
     //метод получения объекта этажа, по его номеру в доме
-    public DwellingFloor getDwellingFlatByNumber(int number) {
+    public DwellingFloor getFloor(int number) {
        return dwellingFloors[number];
     }
 
     //метод изменения этажа по его номеру в доме и ссылке на обновленный этаж
-    public void changeDwellingByNumber(int number, DwellingFloor newDwellingFloor) {
-        dwellingFloors[number] = newDwellingFloor;
+    public void setFloor(int number, Floor newDwellingFloor) {
+        dwellingFloors[number] = (DwellingFloor) newDwellingFloor;
     }
 
     //вспомогательный метод получения номера квартиры и номера этажа
     private FinderFlat findFlatByNumber(int number) {
         int count = 0;
         for(int i = 0; i < size; i++) {
-            int length = dwellingFloors[i].getCountOfFlats();
+            int length = dwellingFloors[i].getSize();
             if (number - count < length) {
                 return new FinderFlat(i, number - count);
             } else {
@@ -91,27 +89,27 @@ public class Dwelling {
     }
 
     //метод получения объекта квартиры по ее номеру в доме
-    public Flat getFlatByNumber(int number){
+    public Flat getSpace(int number){
         FinderFlat finderFlat = findFlatByNumber(number);
-        return dwellingFloors[finderFlat.getFloorNumber()].getFlat(finderFlat.getFlatNumber());
+        return dwellingFloors[finderFlat.getFloorNumber()].getSpace(finderFlat.getFlatNumber());
     }
 
     //метод изменения объекта квартиры по ее номеру в доме и ссылке типа квартиры
-    public void changeFlatByNumber(int flatNumber, Flat newFlat) {
+    public void setSpace(int flatNumber, Space newFlat) {
         FinderFlat finderFlat = findFlatByNumber(flatNumber);
-        dwellingFloors[finderFlat.getFloorNumber()].changeFlat(finderFlat.getFlatNumber(), newFlat);
+        dwellingFloors[finderFlat.getFloorNumber()].setSpace(finderFlat.getFlatNumber(), newFlat);
     }
 
     //метод добавления квартиры в дом по будущему номеру квартиры в доме
-    public void addNewFlatByNumber(int number, Flat newFlat) {
+    public void addSpace(int number, Space newFlat) {
         FinderFlat finderFlat = findFlatByNumber(number);
-        dwellingFloors[finderFlat.getFloorNumber()].addNewFlat(finderFlat.getFlatNumber(), newFlat);
+        dwellingFloors[finderFlat.getFloorNumber()].addSpace(finderFlat.getFlatNumber(), newFlat);
     }
 
     //метод удаления квартиры по ее номеру в доме
-    public void deleteFlatByNumber(int number) {
+    public void deleteSpace(int number) {
         FinderFlat finderFlat = findFlatByNumber(number);
-        dwellingFloors[finderFlat.getFloorNumber()].deleteFlat(finderFlat.getFlatNumber());
+        dwellingFloors[finderFlat.getFloorNumber()].deleteSpace(finderFlat.getFlatNumber());
     }
 
     //метод получения самой большой по площади квартиры дома
@@ -126,13 +124,13 @@ public class Dwelling {
     }
 
     //метод получения отсортированного по убыванию площадей массива квартир
-    public Flat[] sortingFlats() {
-        Flat[] sortFlts = new Flat[getAllFlatsOfBuild()];
+    public Flat[] sortSpaces() {
+        Flat[] sortFlts = new Flat[getSpaces()];
         int counter = 0;
 
         for (int i = 0; i < size; i++ ) {
-            for (int j = 0; j < dwellingFloors[i].getFlatsOfDwelling().length; j++) {
-                sortFlts[counter] = dwellingFloors[i].getFlat(j);
+            for (int j = 0; j < dwellingFloors[i].getArraySpaces().length; j++) {
+                sortFlts[counter] = dwellingFloors[i].getSpace(j);
                 counter++;
             }
         }

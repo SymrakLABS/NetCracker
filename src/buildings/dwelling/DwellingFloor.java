@@ -1,11 +1,9 @@
-package buildings;
+package buildings.dwelling;
 
-/**
- * Добавлено поле size, хранящее размерность массива
- * В соответствии изменены методы добавления/удаления квартир и конструкторы
- */
+import interfaces.Floor;
+import interfaces.Space;
 
-public class DwellingFloor {
+public class DwellingFloor implements Floor {
 
     Flat[] flats;
     private int size;
@@ -22,6 +20,7 @@ public class DwellingFloor {
         size = 0;
     }
 
+    //расширение массива
     private Flat[] expandArray(){
         Flat expandedArray[] = new Flat[2 * flats.length];
         System.arraycopy(flats, 0, expandedArray, 0,flats.length);
@@ -29,12 +28,12 @@ public class DwellingFloor {
     }
 
     //метод получения количества квартир на этаже
-    public int getCountOfFlats() {
+    public int getSize() {
         return size;
     }
 
     //метод получения общей площади квартир этажа
-    public int getAllSquareOfDwelling() {
+    public int getSquare() {
         int allSquare = 0;
         for (int i = 0; i < size; i++) {
             allSquare += flats[i].getSquare();
@@ -43,43 +42,43 @@ public class DwellingFloor {
     }
 
     //метод получения общего количества комнат этажа
-    public int getAllRoomsOfDwelling() {
+    public int getRooms() {
         int allRooms = 0;
         for (int i = 0; i < size; i++) {
-            allRooms += flats[i].getCountRoom();
+            allRooms += flats[i].getRooms();
         }
         return allRooms;
     }
 
     //метод получения массива квартир этажа
-    public Flat[] getFlatsOfDwelling() {
+    public Flat[] getArraySpaces() {
         return flats;
-    } //копия
+    }
 
     //метод получения объекта квартиры, по ее номеру на этаже
-    public Flat getFlat(int number) {
+    public Flat getSpace(int number) {
         return flats[number];
     }
 
     //метод изменения квартиры по ее номеру на этаже и ссылке на новую квартиру
-    public void changeFlat(int number, Flat newFlat) {
-        flats[number] = newFlat;
+    public void setSpace(int number, Space newFlat) {
+        flats[number] = (Flat) newFlat;
     }
 
     //метод добавления новой квартиры на этаже по будущему номеру квартиры
-    public void addNewFlat(int index, Flat newFlat) {
+    public void addSpace(int index, Space newFlat) {
         if (index < size || index > 0) {
             System.arraycopy(flats, index, flats, index + 1, flats.length - (index + 1));
         }
         while (flats.length == size || index > flats.length) {
             flats = expandArray();
         }
-        flats[index] = newFlat;
+        flats[index] = (Flat) newFlat;
         size++;
     }
 
     //метод удаления квартиры по ее номеру на этаже
-    public void deleteFlat(int index){
+    public void deleteSpace(int index){
         if (index < size || index > 0) {
             System.arraycopy(flats, index  + 1, flats, index, flats.length - (index + 1));
             size--;

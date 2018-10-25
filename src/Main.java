@@ -1,32 +1,32 @@
-import buildings.Dwelling;
-import buildings.DwellingFloor;
-import buildings.Flat;
+import buildings.office.Office;
+import buildings.office.OfficeBuilding;
+import buildings.office.OfficeFloor;
 
 public class Main {
 
     public static void main(String[] args) {
 
-        Flat a = new Flat(1,5);
-        Flat b = new Flat(8,6);
-        Flat c = new Flat(5,89);
+        Office a = new Office(1,5);
+        Office b = new Office(8,6);
+        Office c = new Office(5,89);
 
-        Flat d = new Flat(14,52);
-        Flat e = new Flat(85,67);
-        Flat f = new Flat(51,839);
+        Office d = new Office(14,52);
+        Office e = new Office(85,67);
+        Office f = new Office(51,839);
 
-        Flat arr1[] = {a, b, c};
-        Flat arr2[] = {d, e ,f};
+        Office arr1[] = {a, b, c};
+        Office arr2[] = {d, e ,f};
 
-        DwellingFloor dwellingFloor1 = new DwellingFloor(arr1);
-        DwellingFloor dwellingFloor2 = new DwellingFloor(arr2);
+        OfficeFloor dwellingFloor1 = new OfficeFloor(arr1);
+        OfficeFloor dwellingFloor2 = new OfficeFloor(arr2);
 
-        DwellingFloor arr3[] = {dwellingFloor1, dwellingFloor2};
 
-        Dwelling dwelling = new Dwelling(arr3);
+        OfficeFloor of[] = {dwellingFloor1, dwellingFloor2};
 
-        Flat y[] =  dwelling.sortingFlats();
+        OfficeBuilding building = new OfficeBuilding(of);
 
-        for(int i = 0; i < y.length; i++)
-            System.out.println(y[i].getSquare());
+        System.out.println(building.getRooms());
+        for(int i = 0; i < building.getSize(); i++)
+            System.out.println(building.getFloor(i).getBestSpace().getSquare());
     }
 }

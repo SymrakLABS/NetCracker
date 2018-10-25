@@ -1,0 +1,17 @@
+package interfaces;
+
+public interface Building {
+    public int getSize();
+    public int getSpaces();
+    public int getSquare();
+    public int getRooms();
+    public Floor[] getArrayOfSpaces();
+    public Floor getFloor(int index);
+    public void setFloor(int index, Floor newFloor);
+    public Space getSpace(int index);
+    public void setSpace(int index, Space newOffice);
+    public void addSpace(int index, Space newOffice);
+    public void deleteSpace(int index);
+    public Space getBestSpace();
+    public Space[] sortSpaces();
+}

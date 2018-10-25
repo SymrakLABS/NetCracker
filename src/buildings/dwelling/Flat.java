@@ -1,10 +1,8 @@
-package buildings;
+package buildings.dwelling;
 
-/**
- * Подкорректированы названия и конструкторы
- */
+import interfaces.Space;
 
-public class Flat {
+public class Flat implements Space {
     private static final int DEFAULT_SQUARE = 50;
     private static final int DEFAULT_COUNT_ROOMS = 2;
 
@@ -33,7 +31,7 @@ public class Flat {
     }
 
     //метод получения количества комнат в квартире
-    public int getCountRoom() {
+    public int getRooms() {
         return countRoom;
     }
 

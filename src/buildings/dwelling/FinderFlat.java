@@ -1,8 +1,4 @@
-package buildings;
-
-/**
- * Осуществление поиска номера этажа и номера квартиры на этом этаже
- */
+package buildings.dwelling;
 
 public class FinderFlat {
 
