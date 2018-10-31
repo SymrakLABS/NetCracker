@@ -5,7 +5,7 @@ public interface Building {
     public int getSpaces();
     public int getSquare();
     public int getRooms();
-    public Floor[] getArrayOfSpaces();
+    public Floor[] getArrayOfFloors();
     public Floor getFloor(int index);
     public void setFloor(int index, Floor newFloor);
     public Space getSpace(int index);

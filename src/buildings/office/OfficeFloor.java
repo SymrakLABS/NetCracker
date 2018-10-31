@@ -4,9 +4,11 @@ import exceptions.SpaceIndexOutOfBoundsException;
 import interfaces.Floor;
 import interfaces.Space;
 
-public class OfficeFloor implements Floor {
+import java.io.Serializable;
 
-    private static class Node{
+public class OfficeFloor implements Floor, Serializable {
+
+    private static class Node implements Serializable{
         Node next;
         Space office;
 
@@ -184,5 +186,45 @@ public class OfficeFloor implements Floor {
         else {
             return null;
         }
+    }
+
+    @Override
+    public String toString(){
+        Space[] offices = getArraySpaces();
+        StringBuffer s = new StringBuffer();
+        s.append("OfficeFloor (").append(getArraySpaces().length).append(", ");
+        for(int i = 0; i < size; i++) {
+            if (i > 0 ){
+                s.append(", ");
+            }
+            s.append(offices[i].toString());
+        }
+        s.append(")");
+        return s.toString();
+    }
+
+    @Override
+    public boolean equals(Object obj){
+        if(this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (!(obj instanceof OfficeFloor))
+            return false;
+        OfficeFloor other = (OfficeFloor) obj;
+        if (head == null) {
+            if (other.head != null)
+                return false;
+        } else if (!head.equals(other.head))
+            return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((head == null) ? 0 : head.hashCode());
+        return result;
     }
 }

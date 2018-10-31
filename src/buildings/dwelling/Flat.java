@@ -44,4 +44,48 @@ public class Flat implements Space {
     public void setRoom(int room) {
         this.countRoom = room;
     }
+
+    @Override
+    public String toString(){
+        return "Flat (" + countRoom + ", " + square + ")";
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (!(obj instanceof Flat))
+            return false;
+        Flat other = (Flat) obj;
+        if (square != other.square)
+            return false;
+        if (countRoom != other.countRoom)
+            return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        long temp;
+        temp = Double.doubleToLongBits(square);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        result = prime * result + countRoom;
+        return result;
+    }
+
+
+    @Override
+    public Object clone() {
+        Object result;
+        try {
+            result = super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new InternalError();
+        }
+        return result;
+    }
 }

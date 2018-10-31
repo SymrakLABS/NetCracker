@@ -3,6 +3,8 @@ package buildings.dwelling;
 import interfaces.Floor;
 import interfaces.Space;
 
+import java.util.Arrays;
+
 public class DwellingFloor implements Floor {
 
     Flat[] flats;
@@ -104,4 +106,43 @@ public class DwellingFloor implements Floor {
         }
         return null;
     }
+
+    @Override
+    public String toString(){
+        StringBuffer s = new StringBuffer();
+        s.append("DwellingFloor (").append(getArraySpaces().length).append(", ");
+        for(int i = 0; i < size; i++) {
+            if (i > 0 ){
+                s.append(", ");
+            }
+            s.append(flats[i].toString());
+        }
+        s.append(")");
+        return s.toString();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (!(obj instanceof DwellingFloor))
+            return false;
+        DwellingFloor other = (DwellingFloor) obj;
+        if (!Arrays.equals(flats, other.flats))
+            return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Arrays.hashCode(flats);
+        return result;
+    }
+
 }
+
+

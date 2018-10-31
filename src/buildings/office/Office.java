@@ -2,7 +2,9 @@ package buildings.office;
 
 import interfaces.Space;
 
-public class Office implements Space {
+import java.io.Serializable;
+
+public class Office implements Space, Serializable {
 
     private static final int DEFAULT_COUNT_ROOMS = 1;
     private static final int DEFAULT_SQUARE = 250;
@@ -44,5 +46,37 @@ public class Office implements Space {
     //метод изменения площади офиса
     public void setSquare(int newSquare) {
         this.square = newSquare;
+    }
+
+    @Override
+    public String toString(){
+        return "Office (" + countOfRooms+ ", " + square + ")";
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (!(obj instanceof Office))
+            return false;
+        Office other = (Office) obj;
+        if (square != other.square)
+            return false;
+        if (countOfRooms != other.countOfRooms)
+            return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        long temp;
+        temp = Double.doubleToLongBits(square);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        result = prime * result + countOfRooms;
+        return result;
     }
 }

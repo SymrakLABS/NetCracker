@@ -4,6 +4,8 @@ import interfaces.Building;
 import interfaces.Floor;
 import interfaces.Space;
 
+import java.util.Arrays;
+
 public class Dwelling implements Building {
 
     DwellingFloor[] dwellingFloors;
@@ -60,7 +62,7 @@ public class Dwelling implements Building {
     }
 
     //метод получения массива этажей жилого дома
-    public DwellingFloor[] getArrayOfSpaces() {
+    public DwellingFloor[] getArrayOfFloors() {
         return dwellingFloors;
     }
 
@@ -146,4 +148,39 @@ public class Dwelling implements Building {
         }
         return sortFlts;
     }
+
+    @Override
+    public String toString() {
+        StringBuffer s = new StringBuffer();
+        s.append("Dwelling (").append(size).append(", ");
+        for (int i = 0; i < size; i++) {
+            if (i > 0) s.append(", ");
+            s.append(dwellingFloors[i].toString());
+        }
+        s.append(")");
+        return s.toString();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (!(obj instanceof Dwelling))
+            return false;
+        Dwelling other = (Dwelling) obj;
+        if (!Arrays.equals(dwellingFloors, other.dwellingFloors))
+            return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Arrays.hashCode(dwellingFloors);
+        return result;
+    }
+
 }

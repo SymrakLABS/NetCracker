@@ -7,11 +7,12 @@ import interfaces.Building;
 import interfaces.Floor;
 import interfaces.Space;
 
+import java.io.Serializable;
 import java.util.function.Function;
 
-public class OfficeBuilding implements Building {
+public class OfficeBuilding implements Building, Serializable {
 
-    private static class Node {
+    private static class Node implements Serializable {
         Node next;
         Node previous;
         Floor officeFloor;
@@ -136,7 +137,7 @@ public class OfficeBuilding implements Building {
     }
 
     //метод получения массива этажей офисного здания
-    public Floor[] getArrayOfSpaces() {
+    public Floor[] getArrayOfFloors() {
         if (head != null && head.next != head) {
             Floor[] result = new Floor[size];
             for (int i = 0; i < size; i++) {
@@ -260,5 +261,43 @@ public class OfficeBuilding implements Building {
                     temp[j + 1] = tempNext;
                 }
         return temp;
+    }
+
+    @Override
+    public String toString() {
+        StringBuffer s = new StringBuffer();
+        Floor[] floors = getArrayOfFloors();
+        s.append("OfficeBuilding (").append(size).append(", ");
+        for (int i = 0; i < size; i++) {
+            if (i > 0) s.append(", ");
+            s.append(floors[i].toString());
+        }
+        s.append(")");
+        return s.toString();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (!(obj instanceof OfficeBuilding))
+            return false;
+        OfficeBuilding other = (OfficeBuilding) obj;
+        if (head == null) {
+            if (other.head != null)
+                return false;
+        } else if (!head.equals(other.head))
+            return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((head == null) ? 0 : head.hashCode());
+        return result;
     }
 }
