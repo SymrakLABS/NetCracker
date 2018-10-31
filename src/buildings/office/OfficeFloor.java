@@ -23,6 +23,8 @@ public class OfficeFloor implements Floor, Serializable {
 
     //конструктор может принимать количество офисов на этаже
     public OfficeFloor(int countOfOffices) {
+        //todo в отличие от массива, здесь не нужно ноды создавать, просто конструктор, который ничего не делает, только head создает.
+        //ты же все равно при добавлении space-а создаешь новый нод (листэлемент)
         if(countOfOffices >= 0){
             for (int i = 0; i < countOfOffices; i++) {
                 this.addNode(new Node(new Office(), null), i);
@@ -36,6 +38,8 @@ public class OfficeFloor implements Floor, Serializable {
 
     //конструктор может принимать массив офисов этажа
     public OfficeFloor(Space[] offices) {
+        //не эффективно - каждый раз добавляя по i-му номеру ты гуляешь в поисках предыдущего нода i-1 раз.
+        //todo лушче бы хранить tail - ссылку на последний нод, и добавлять нод после него
         for (int i = 0; i < offices.length; i++){
             addNode(new Node(offices[i], null), i);
         }
@@ -44,6 +48,7 @@ public class OfficeFloor implements Floor, Serializable {
 
     //метод получения узла по его номеру
     private Node getNode(int index) {
+        //todo вот тут нужно проверку индекса делать и выбрасывать исключение, а не в методах, работающих со Space-ом
         if(head != null) {
             Node current = head.next;
             int j = 0;
@@ -59,6 +64,7 @@ public class OfficeFloor implements Floor, Serializable {
 
     //метод добавления узла в список по номеру
     private void addNode(Node node, int index) {
+        //todo вот тут нужно проверку индекса делать и выбрасывать исключение, а не в методах, работающих со Space-ом
         if (index == 0 || (head == null)) {
             if (head == null) {
                 head = new Node(null, null);
@@ -76,6 +82,7 @@ public class OfficeFloor implements Floor, Serializable {
 
     //метод удаления узла из списка по его номеру
     private void removeNode(int index) {
+        //todo вот тут нужно проверку индекса делать и выбрасывать исключение, а не в методах, работающих со Space-ом
         if (head != null) {
             if (index != 0) {
                 Node current = getNode(index - 1);
@@ -98,6 +105,7 @@ public class OfficeFloor implements Floor, Serializable {
 
     //метод получения общей площади помещений этажа
     public int getSquare() {
+        //todo нененене getNode(i) здесь вообще не эффективно. Гуляешь по нодам в цикле и каждый раз идешь к следующему по ссылке next. За один проход, а не за n*n как у тебя
         if (head != null && head.next != head) {
             int result = getNode(0).office.getSquare();
             for (int i = 1; i < size; i++){
@@ -112,6 +120,7 @@ public class OfficeFloor implements Floor, Serializable {
 
     //метод получения общего количества комнат этажа
     public int getRooms() {
+        //todo нененене getNode(i) здесь вообще не эффективно. Гуляешь по нодам в цикле и каждый раз идешь к следующему по ссылке next. За один проход, а не за n*n как у тебя
         if (head != null && head.next != head) {
             int result = getNode(0).office.getRooms();
             for (int i = 1; i < size; i++) {
@@ -126,6 +135,7 @@ public class OfficeFloor implements Floor, Serializable {
 
     //метод получения массива офисов этажа
     public Space[] getArraySpaces() {
+        //todo нененене getNode(i) здесь вообще не эффективно. Гуляешь по нодам в цикле и каждый раз идешь к следующему по ссылке next. За один проход, а не за n*n как у тебя
         if (head != null && size != 0) {
             Space[] result = new Space[this.getSize()];
             for (int i = 0; i < size; i++) {
@@ -139,7 +149,9 @@ public class OfficeFloor implements Floor, Serializable {
     }
 
     //метод получения офиса по его номеру на этаже
+    //todo и почему у тебя в этом методе number, а в следующих index? =))))
     public Space getSpace(int number) {
+        //todo одну и ту же проверку даже не дублировал, а квадрировал =))))) вынеси ее в отдельный void метод checkIndex
         if ((number > size)||(number < 0)) {
             throw new SpaceIndexOutOfBoundsException();
         }
@@ -176,6 +188,7 @@ public class OfficeFloor implements Floor, Serializable {
     public Space getBestSpace() {
         if (head != null && head.next != head) {
             Space bestSpace = getSpace(0);
+            //todo нененене getNode(i) здесь вообще не эффективно. Гуляешь по нодам в цикле и каждый раз идешь к следующему по ссылке next. За один проход, а не за n*n как у тебя
             for (int i = 1; i < size; i++) {
                 if (bestSpace.getSquare() < getNode(i).office.getSquare()) {
                     bestSpace = getNode(i).office;

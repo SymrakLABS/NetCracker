@@ -28,6 +28,9 @@ public class Buildings {
         dos.close();
     }
 
+    /* todo а с чего это ты решил, что там office, а не Flat, officeFloor, а не DwellingFloor, officeBuilding, а не Dwelling?
+     * хотяб добавил в выводе в самом начале строку - имя класса здания, здесь сначала считываешь его и в зависимости от считанного имени уже создаешь соответсвующие классы
+     * а чтоб сделать это по-человечески, реализуй BuildingsFactory (пока без HotelFactory) из 6-й лабы и используй ее =)))))))))*/
     //метод чтения данных о здании из байтового потока
     public static Building inputBuilding (InputStream in) throws IOException {
         DataInputStream dis = new DataInputStream(in);
@@ -36,13 +39,14 @@ public class Buildings {
         Floor[] floors = new Floor[floorCount];
         for (int i = 0; i < floorCount; i++) {
             int spacesCount = dis.readInt();
+            /* todo массив здесь создавать не нужно. Создай экземпляр класса officeFloor или DwellingFloor используя конструктор, принимающий число помещений
+             * и в цикле используй метод add()*/
             Space[] spaces = new Space[spacesCount];
             for (int j = 0; j < spacesCount; j++) {
                 int roomCount = dis.readInt();
                 int area = dis.readInt();
                 spaces[j] = new Office(area, roomCount);
             }
-
             floors[i] = new OfficeFloor(spaces);
         }
         building = new OfficeBuilding(floors);
@@ -69,6 +73,7 @@ public class Buildings {
         pwo.close();
     }
 
+    // todo аналогично методу inputBuilding()
     //метод чтения здания из символьного потока
     public static Building readBuilding (Reader in) throws IOException {
         StreamTokenizer tokenizer = new StreamTokenizer(in);
@@ -96,13 +101,16 @@ public class Buildings {
     public static void serializeBuilding (Building building, OutputStream out) throws IOException{
         ObjectOutputStream outputStream = new ObjectOutputStream(out);
         outputStream.writeObject(building);
+        //todo поток забыл закрыть
     }
 
     //метод десериализации здания из байтового потока
     public static Building deserialaizeBuilding (InputStream in) throws IOException, ClassNotFoundException{
         ObjectInputStream inputStream = new ObjectInputStream(in);
-        Object building = inputStream.readObject();
+        Object building = inputStream.readObject(); //todo поток забыл закрыть
 
+
+        //todo внимательно посмотри на этот if и познай всю свою рукожопость =)))))))))))
         if (building != null) {
             return (Building) building;
         }
@@ -125,6 +133,7 @@ public class Buildings {
         out.close();
     }
 
+    // todo аналогично методу inputBuilding()
     //метод текстового чтения
     public static Building readBuilding(Scanner in) {
         Building building;

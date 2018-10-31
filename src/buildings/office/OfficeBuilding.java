@@ -42,6 +42,8 @@ public class OfficeBuilding implements Building, Serializable {
 
     //конструктор принимает массив этажей офисного здания
     public OfficeBuilding(Floor[] officeFloors){
+        //не эффективно - каждый раз добавляя по i-му номеру ты гуляешь в поисках предыдущего нода i-1 раз.
+        //todo лушче бы хранить tail - ссылку на последний нод (либо, поскольку список двусвязный, через head.previous), и добавлять нод после него
         this.size = officeFloors.length;
         for (int i = 0; i < officeFloors.length; i++)
             this.addNode(i, new Node(officeFloors[i], null, null));
@@ -49,6 +51,7 @@ public class OfficeBuilding implements Building, Serializable {
 
     //метод получения узла по его номеру
     private Node getNode(int index) {
+        //todo вот тут нужно проверку индекса делать и выбрасывать исключение, а не в методах, работающих со Floor-ом. И чтоб null не возвращать
         if(head != null) {
             Node current = head.next;
             int j = 0;
@@ -64,6 +67,7 @@ public class OfficeBuilding implements Building, Serializable {
 
     //метод добавления узла в список по номеру
     private void addNode(int index, Node newNode){
+        //todo вот тут нужно проверку индекса делать и выбрасывать исключение, а не в методах, работающих со Floor-ом
         if (index == 0 || (head == null)) {
             if (head == null) {
                 head = new Node(null, null, null);
@@ -82,6 +86,7 @@ public class OfficeBuilding implements Building, Serializable {
 
     //метод удаления узла из списка по его номеру
     private void removeNode(int index){
+        //todo вот тут нужно проверку индекса делать и выбрасывать исключение, а не в методах, работающих со Space-ом
         if (head != null) {
             if (index != 0) {
                 Node current = getNode(index - 1);
@@ -109,6 +114,7 @@ public class OfficeBuilding implements Building, Serializable {
     public int findParameter(Function<Floor, Integer> function){
         int param = 0;
         if (head != null && head.next != head) {
+            //todo нененене getNode(i) здесь вообще не эффективно. Гуляешь по нодам в цикле и каждый раз идешь к следующему по ссылке next. За один проход, а не за n*n как у тебя
             for (int i = 0; i < size; i++) {
                 param += function.apply(getNode(i).officeFloor);
             }
@@ -140,6 +146,7 @@ public class OfficeBuilding implements Building, Serializable {
     public Floor[] getArrayOfFloors() {
         if (head != null && head.next != head) {
             Floor[] result = new Floor[size];
+            //todo нененене getNode(i) здесь вообще не эффективно. Гуляешь по нодам в цикле и каждый раз идешь к следующему по ссылке next. За один проход, а не за n*n как у тебя
             for (int i = 0; i < size; i++) {
                 result[i] = getNode(i).officeFloor;
             }
@@ -150,6 +157,7 @@ public class OfficeBuilding implements Building, Serializable {
         }
     }
 
+    //todo вынеси дублирующиеся проверки в приватные методы, например void checkFloorIndex()
     //метод получения объекта этажа, по его номеру в здании
     public Floor getFloor(int index) {
         if ((index > size)||(index < 0)) {
@@ -173,7 +181,7 @@ public class OfficeBuilding implements Building, Serializable {
             return getFloor(temp.getFloorNumber()).getSpace(temp.getFlatNumber());
         }
         else{
-            throw new IndexOutOfBoundsException();
+            throw new IndexOutOfBoundsException(); //todo может все же SpaceIndexOutOfBoundsException?
         }
     }
 
@@ -184,7 +192,7 @@ public class OfficeBuilding implements Building, Serializable {
             getFloor(temp.getFloorNumber()).setSpace(temp.getFlatNumber(), newOffice);
         }
         else{
-            throw new IndexOutOfBoundsException();
+            throw new IndexOutOfBoundsException(); //todo может все же SpaceIndexOutOfBoundsException?
         }
     }
 
@@ -202,11 +210,11 @@ public class OfficeBuilding implements Building, Serializable {
                 return null;
             }
             else{
-                throw new FloorIndexOutOfBoundsException();
+                throw new FloorIndexOutOfBoundsException(); //todo может все же SpaceIndexOutOfBoundsException?
             }
         }
         else{
-            throw new FloorIndexOutOfBoundsException();
+            throw new FloorIndexOutOfBoundsException(); //todo может все же SpaceIndexOutOfBoundsException?
         }
     }
 
@@ -236,6 +244,7 @@ public class OfficeBuilding implements Building, Serializable {
     public Space getBestSpace() {
         if (head != null && size != 0) {
             Space bestArea = getSpace(0);
+            //todo getSpace 2 раза вызываешь - выноси в переменную. Нефиг выполнять одни и те же вычисления по нескольку раз.
             for (int i = 1; i < size; i++)
                 if (bestArea.getSquare() < getSpace(i).getSquare()) {
                     bestArea = getSpace(i);
