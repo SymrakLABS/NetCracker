@@ -71,7 +71,7 @@ public class Main {
             exp.printStackTrace();
         }
 
-        /*
+
 
         try {
             FileWriter os = new FileWriter("C:\\Users\\Symrak\\Desktop\\q.txt");
@@ -89,7 +89,7 @@ public class Main {
             System.out.println(ob);
         } catch (FileNotFoundException exp){
             exp.printStackTrace();
-        } */
+        }
 
     }
 

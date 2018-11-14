@@ -1,5 +1,7 @@
 package interfaces;
 
+import interfaces.Building;
+
 public interface BuildingFactory {
     public Space createSpace(int square);
     public Space createSpace(int roomsCount, int square);

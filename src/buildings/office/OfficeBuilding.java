@@ -42,8 +42,6 @@ public class OfficeBuilding implements Building, Serializable {
 
     //конструктор принимает массив этажей офисного здания
     public OfficeBuilding(Floor[] officeFloors){
-        //не эффективно - каждый раз добавляя по i-му номеру ты гуляешь в поисках предыдущего нода i-1 раз.
-        //todo лушче бы хранить tail - ссылку на последний нод (либо, поскольку список двусвязный, через head.previous), и добавлять нод после него
         this.size = officeFloors.length;
         head = new Node(null, null, null);
         head.next = head;
@@ -61,15 +59,6 @@ public class OfficeBuilding implements Building, Serializable {
 
     //метод получения узла по его номеру
     private Node getNode(int index) {
-<<<<<<< HEAD
-        //todo вот тут нужно проверку индекса делать и выбрасывать исключение, а не в методах, работающих со Floor-ом. И чтоб null не возвращать
-        if(head != null) {
-            Node current = head.next;
-            int j = 0;
-            while (current != head) {
-                if (j++ == index) {
-                    return current;
-=======
         if(checkIndex(index)){
             if(head != null) {
                 Node current = head.next;
@@ -79,7 +68,6 @@ public class OfficeBuilding implements Building, Serializable {
                         return current;
                     }
                     current = current.next;
->>>>>>> fourth laba with a factory
                 }
             }
         }
@@ -88,14 +76,6 @@ public class OfficeBuilding implements Building, Serializable {
 
     //метод добавления узла в список по номеру
     private void addNode(int index, Node newNode){
-<<<<<<< HEAD
-        //todo вот тут нужно проверку индекса делать и выбрасывать исключение, а не в методах, работающих со Floor-ом
-        if (index == 0 || (head == null)) {
-            if (head == null) {
-                head = new Node(null, null, null);
-                head.next = new Node(newNode.officeFloor, head, head);
-                head.previous = head.next;
-=======
         if(checkIndex(index)){
             if (index == 0 || (head == null)) {
                 if (head == null) {
@@ -106,7 +86,6 @@ public class OfficeBuilding implements Building, Serializable {
                 else {
                     head.next = new Node(newNode.officeFloor, head.next, head);
                 }
->>>>>>> fourth laba with a factory
             }
             else {
                 Node current = this.getNode(index - 1);
@@ -117,23 +96,6 @@ public class OfficeBuilding implements Building, Serializable {
 
     //метод удаления узла из списка по его номеру
     private void removeNode(int index){
-<<<<<<< HEAD
-        //todo вот тут нужно проверку индекса делать и выбрасывать исключение, а не в методах, работающих со Space-ом
-        if (head != null) {
-            if (index != 0) {
-                Node current = getNode(index - 1);
-                current.next = current.next.next;
-                current.next.previous = current;
-            }
-            else if (head.next.next == head){
-                head.next = head;
-                head.previous = head;
-            }
-            else {
-                Node current = head.next;
-                head.next = current.next;
-                head.next.previous = head;
-=======
         if(checkIndex(index)){
             if (head != null) {
                 if (index != 0) {
@@ -150,7 +112,6 @@ public class OfficeBuilding implements Building, Serializable {
                     head.next = current.next;
                     head.next.previous = head;
                 }
->>>>>>> fourth laba with a factory
             }
         }
     }
@@ -163,21 +124,12 @@ public class OfficeBuilding implements Building, Serializable {
     //вспомогательный метод поиска количества оффисов, площади и количества комнат
     public int findParameter(Function<Floor, Integer> function){
         int param = 0;
-<<<<<<< HEAD
-        if (head != null && head.next != head) {
-            //todo нененене getNode(i) здесь вообще не эффективно. Гуляешь по нодам в цикле и каждый раз идешь к следующему по ссылке next. За один проход, а не за n*n как у тебя
-            for (int i = 0; i < size; i++) {
-                param += function.apply(getNode(i).officeFloor);
-            }
-        }
-=======
         Node current = head;
         do {
             current = current.next;
             param += function.apply(current.officeFloor);
 
         } while (current.next != head);
->>>>>>> fourth laba with a factory
         return param;
     }
 
@@ -203,21 +155,11 @@ public class OfficeBuilding implements Building, Serializable {
 
     //метод получения массива этажей офисного здания
     public Floor[] getArrayOfFloors() {
-<<<<<<< HEAD
-        if (head != null && head.next != head) {
-            Floor[] result = new Floor[size];
-            //todo нененене getNode(i) здесь вообще не эффективно. Гуляешь по нодам в цикле и каждый раз идешь к следующему по ссылке next. За один проход, а не за n*n как у тебя
-            for (int i = 0; i < size; i++) {
-                result[i] = getNode(i).officeFloor;
-            }
-            return result;
-=======
-        OfficeFloor officeFloor[] = new OfficeFloor[size];
+        Floor officeFloor[] = new Floor[size];
         Node current = head;
         for (int i = 0; i < size; i++) {
             current = current.next;
-            officeFloor[i] = (OfficeFloor) current.officeFloor;
->>>>>>> fourth laba with a factory
+            officeFloor[i] = current.officeFloor;
         }
         return officeFloor;
     }
@@ -229,7 +171,6 @@ public class OfficeBuilding implements Building, Serializable {
         return true;
     }
 
-    //todo вынеси дублирующиеся проверки в приватные методы, например void checkFloorIndex()
     //метод получения объекта этажа, по его номеру в здании
     public Floor getFloor(int index) {
         return getNode(index).officeFloor;
@@ -247,11 +188,7 @@ public class OfficeBuilding implements Building, Serializable {
             return getFloor(temp.getFloorNumber()).getSpace(temp.getFlatNumber());
         }
         else{
-<<<<<<< HEAD
-            throw new IndexOutOfBoundsException(); //todo может все же SpaceIndexOutOfBoundsException?
-=======
             throw new SpaceIndexOutOfBoundsException();
->>>>>>> fourth laba with a factory
         }
     }
 
@@ -262,11 +199,7 @@ public class OfficeBuilding implements Building, Serializable {
             getFloor(temp.getFloorNumber()).setSpace(temp.getFlatNumber(), newOffice);
         }
         else{
-<<<<<<< HEAD
-            throw new IndexOutOfBoundsException(); //todo может все же SpaceIndexOutOfBoundsException?
-=======
             throw new SpaceIndexOutOfBoundsException();
->>>>>>> fourth laba with a factory
         }
     }
 
@@ -284,19 +217,12 @@ public class OfficeBuilding implements Building, Serializable {
                 return null;
             }
             else{
-<<<<<<< HEAD
-                throw new FloorIndexOutOfBoundsException(); //todo может все же SpaceIndexOutOfBoundsException?
-            }
-        }
-        else{
-            throw new FloorIndexOutOfBoundsException(); //todo может все же SpaceIndexOutOfBoundsException?
-=======
                 throw new SpaceIndexOutOfBoundsException();
             }
         }
         else{
             throw new SpaceIndexOutOfBoundsException();
->>>>>>> fourth laba with a factory
+
         }
     }
 
@@ -324,19 +250,6 @@ public class OfficeBuilding implements Building, Serializable {
 
     //метод получения самого большого по площади офиса здания
     public Space getBestSpace() {
-<<<<<<< HEAD
-        if (head != null && size != 0) {
-            Space bestArea = getSpace(0);
-            //todo getSpace 2 раза вызываешь - выноси в переменную. Нефиг выполнять одни и те же вычисления по нескольку раз.
-            for (int i = 1; i < size; i++)
-                if (bestArea.getSquare() < getSpace(i).getSquare()) {
-                    bestArea = getSpace(i);
-                }
-            return bestArea;
-        }
-        else {
-            return null;
-=======
         int bestSpace = 0;
         Space officeBestSpace = null;
         Node current = head;
@@ -346,7 +259,6 @@ public class OfficeBuilding implements Building, Serializable {
                 bestSpace = current.officeFloor.getSquare();
                 officeBestSpace = current.officeFloor.getBestSpace();
             }
->>>>>>> fourth laba with a factory
         }
         return officeBestSpace;
     }
