@@ -1,7 +1,6 @@
 import buildings.office.Office;
 import buildings.office.OfficeBuilding;
 import buildings.office.OfficeFloor;
-import exceptions.InexchangeableFloorsException;
 
 import java.io.*;
 import java.util.Scanner;
@@ -11,12 +10,12 @@ public class Main {
     public static void main(String[] args) {
 
         Office a = new Office(1,6);
-        Office b = new Office(1,6);
-        Office c = new Office(5,89);
+        Office b = new Office(90,6);
+        Office c = new Office(1000,89);
 
         Office d = new Office(14,52);
         Office e = new Office(85,67);
-        Office f = new Office(1,839);
+        Office f = new Office(900,839);
 
         Office arr1[] = {a, b, c};
         Office arr2[] = {d, e ,f};
@@ -32,11 +31,23 @@ public class Main {
         OfficeBuilding building1 = new OfficeBuilding(of1);
         OfficeBuilding building = new OfficeBuilding(of);
 
-        System.out.println();
+
+        OfficeFloor n = new OfficeFloor(2);
+        n.addSpace(0, a);
+        n.addSpace(1, b);
+        //System.out.println(n);
+
+        for(int i = 0; i < building1.getSize(); i++){
+            for(int j = 0; j < building1.getFloor(i).getSize(); j++){
+                //System.out.println(building1.getFloor(i).getSpace(j).getRooms());
+            }
+        }
+
+
 
         try{
             FileOutputStream fos = new FileOutputStream("C:\\Users\\Symrak\\Desktop\\q.dat");
-            Buildings.outputBuilding(building, fos);
+            Buildings.outputBuilding(building1, fos);
         } catch (FileNotFoundException exp){
             exp.printStackTrace();
         } catch (IOException exp){
@@ -54,12 +65,13 @@ public class Main {
                 }
             }
 
-
         } catch (FileNotFoundException exp){
             exp.printStackTrace();
         } catch (IOException exp) {
             exp.printStackTrace();
         }
+
+        /*
 
         try {
             FileWriter os = new FileWriter("C:\\Users\\Symrak\\Desktop\\q.txt");
@@ -74,9 +86,11 @@ public class Main {
             File file = new File("C:\\Users\\Symrak\\Desktop\\q.txt");
             Scanner in = new Scanner(file);
             OfficeBuilding ob = (OfficeBuilding) Buildings.readBuilding(in);
-            System.out.println(ob.getFloor(0).getSpace(0).getRooms());
+            System.out.println(ob);
         } catch (FileNotFoundException exp){
             exp.printStackTrace();
-        }
+        } */
+
     }
+
 }

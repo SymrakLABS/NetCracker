@@ -1,7 +1,6 @@
-import buildings.office.Office;
-import buildings.office.OfficeBuilding;
-import buildings.office.OfficeFloor;
+import factory.OfficeFactory;
 import interfaces.Building;
+import interfaces.BuildingFactory;
 import interfaces.Floor;
 import interfaces.Space;
 
@@ -11,6 +10,36 @@ import java.util.Locale;
 import java.util.Scanner;
 
 public class Buildings {
+
+    private static BuildingFactory buildingFactory = new OfficeFactory();
+
+    public static void setBuildingFactory(BuildingFactory buildingFactory) {
+        Buildings.buildingFactory = buildingFactory;
+    }
+
+    public Space createSpace(int square) {
+        return buildingFactory.createSpace(square);
+    }
+
+    public Space createSpace(int roomsCount, int square) {
+        return buildingFactory.createSpace(roomsCount, square);
+    }
+
+    public Floor createFloor(int spacesCount) {
+        return buildingFactory.createFloor(spacesCount);
+    }
+
+    public Floor createFloor(Space[] spaces) {
+        return buildingFactory.createFloor(spaces);
+    }
+
+    public Building createBuilding(int floorsCount, int[] spacesCounts) {
+        return buildingFactory.createBuilding(floorsCount, spacesCounts);
+    }
+
+    public Building createBuilding(Floor[] floors) {
+        return buildingFactory.createBuilding(floors);
+    }
 
     //метод записи данных о здании в байтовый поток
     public static void outputBuilding(Building building, OutputStream out) throws IOException {
@@ -34,6 +63,7 @@ public class Buildings {
     //метод чтения данных о здании из байтового потока
     public static Building inputBuilding (InputStream in) throws IOException {
         DataInputStream dis = new DataInputStream(in);
+<<<<<<< HEAD
         Building building;
         int floorCount = dis.readInt();
         Floor[] floors = new Floor[floorCount];
@@ -48,12 +78,19 @@ public class Buildings {
                 spaces[j] = new Office(area, roomCount);
             }
             floors[i] = new OfficeFloor(spaces);
+=======
+        Floor[] floors = new Floor[dis.readInt()];
+        for(int i = 0, sizeFloors = floors.length; i < sizeFloors; i++) {
+            Space[] flats = new Space[dis.readInt()];
+            for (int j = 0, sizeFlats = flats.length; j < sizeFlats; j++) {
+                flats[j] = buildingFactory.createSpace(dis.readInt(), dis.readInt());
+            }
+            floors[i] = buildingFactory.createFloor(flats);
+>>>>>>> fourth laba with a factory
         }
-        building = new OfficeBuilding(floors);
         dis.close();
-        return building;
+        return buildingFactory.createBuilding(floors);
     }
-
 
     //метод записи здания в символьный поток
     public static void writeBuilding (Building building, Writer out) {
@@ -76,37 +113,33 @@ public class Buildings {
     // todo аналогично методу inputBuilding()
     //метод чтения здания из символьного потока
     public static Building readBuilding (Reader in) throws IOException {
-        StreamTokenizer tokenizer = new StreamTokenizer(in);
-        tokenizer.nextToken();
-        OfficeFloor[] floors = new OfficeFloor[(int) tokenizer.nval];
-        if (floors.length == 0){
-            return null;
-        }
-        for (int floorIndex = 0; floorIndex < floors.length; floorIndex++) {
-            tokenizer.nextToken();
-            Office[] spaces = new Office[(int) tokenizer.nval];
-            for (int spaceIndex = 0; spaceIndex < spaces.length; spaceIndex++) {
-                tokenizer.nextToken();
-                int roomsCount = (int) tokenizer.nval;
-                tokenizer.nextToken();
-                int area = (int)tokenizer.nval;
-                spaces[spaceIndex] = new Office(roomsCount, area);
+        StreamTokenizer st = new StreamTokenizer(in);
+        Floor [] floors = new Floor[(int)st.nextToken()];
+        for(int i = 0, sizeFloors = floors.length; i < sizeFloors; i++) {
+            Space[] flats = new Space[(int)st.nextToken()];
+            for (int j = 0, sizeFlats = flats.length; j < sizeFlats; j++) {
+                flats[j] = buildingFactory.createSpace((int)st.nextToken(), (int)st.nextToken());
             }
-            floors[floorIndex] = new OfficeFloor(spaces);
+            floors[i] = buildingFactory.createFloor(flats);
         }
-        return new OfficeBuilding(floors);
+        return buildingFactory.createBuilding(floors);
     }
 
     //метод сериализации здания в байтовый поток
     public static void serializeBuilding (Building building, OutputStream out) throws IOException{
         ObjectOutputStream outputStream = new ObjectOutputStream(out);
         outputStream.writeObject(building);
+<<<<<<< HEAD
         //todo поток забыл закрыть
+=======
+        outputStream.close();
+>>>>>>> fourth laba with a factory
     }
 
     //метод десериализации здания из байтового потока
     public static Building deserialaizeBuilding (InputStream in) throws IOException, ClassNotFoundException{
         ObjectInputStream inputStream = new ObjectInputStream(in);
+<<<<<<< HEAD
         Object building = inputStream.readObject(); //todo поток забыл закрыть
 
 
@@ -115,6 +148,10 @@ public class Buildings {
             return (Building) building;
         }
         return null;
+=======
+        Object building = inputStream.readObject();
+        return (Building) building;
+>>>>>>> fourth laba with a factory
     }
 
     //метод текстовой форматированной записи
@@ -145,12 +182,12 @@ public class Buildings {
             for (int j = 0; j < spacesCount; j++) {
                 int roomCount = in.nextInt();
                 int area = in.nextInt();
-                spaces[j] = new Office(area, roomCount);
+                spaces[j] = buildingFactory.createSpace(roomCount, area);
             }
 
-            floors[i] = new OfficeFloor(spaces);
+            floors[i] = buildingFactory.createFloor(spaces);
         }
-        building = new OfficeBuilding(floors);
+        building = buildingFactory.createBuilding(floors);
         in.close();
         return building;
     }
