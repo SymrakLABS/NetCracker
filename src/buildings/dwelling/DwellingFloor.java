@@ -111,21 +111,11 @@ public class DwellingFloor implements Floor, Cloneable, Serializable {
 
     @Override
     public String toString(){
-<<<<<<< HEAD
+        //todo StringBuilder +++
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("DwellinFloor (").append(size);
         for (int i = 0; i < size; i++) {
             stringBuilder.append(", ").append(flats[i]);
-=======
-        //todo StringBuilder
-        StringBuffer s = new StringBuffer();
-        s.append("DwellingFloor (").append(getArraySpaces().length).append(", ");
-        for(int i = 0; i < size; i++) {
-            if (i > 0 ){
-                s.append(", ");
-            }
-            s.append(flats[i].toString());
->>>>>>> ad9b837a97c31a232edcdd253468da34758c7593
         }
         stringBuilder.append(")");
         return stringBuilder.toString();
@@ -133,22 +123,21 @@ public class DwellingFloor implements Floor, Cloneable, Serializable {
 
     @Override
     public boolean equals(Object obj) {
+        //todo Arrays.deepEquals(), а не просто equals() +++
         if (this == obj)
             return true;
-        if (obj == null)
+        if (!(obj instanceof DwellingFloor)) {
             return false;
-        if (!(obj instanceof DwellingFloor))
+        }
+        DwellingFloor dwellingFloor = (DwellingFloor) obj;
+        if (dwellingFloor.size != size) {
             return false;
-        DwellingFloor other = (DwellingFloor) obj;
-
-        if (!Arrays.equals(flats, other.flats)) //todo Arrays.deepEquals(), а не просто equals()
-            return false;
-        return true;
+        }
+        return Arrays.deepEquals(dwellingFloor.flats, flats);
     }
 
     @Override
     public int hashCode() {
-<<<<<<< HEAD
         int hashCode = size;
         for (int i = 0; i < size; i++) {
             hashCode ^= flats[i].hashCode();
@@ -156,6 +145,7 @@ public class DwellingFloor implements Floor, Cloneable, Serializable {
         return hashCode;
     }
 
+    //todo clone() +++
     @Override
     public Object clone() throws CloneNotSupportedException{
         DwellingFloor dwellingFloor = (DwellingFloor) super.clone();
@@ -204,14 +194,6 @@ public class DwellingFloor implements Floor, Cloneable, Serializable {
                 return flats[currentInd++];
             }
         };
-=======
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Arrays.hashCode(flats);//todo Arrays.deepHashCode(), а не просто hashCode()
-        return result;
->>>>>>> ad9b837a97c31a232edcdd253468da34758c7593
     }
-    //todo clone()
+
 }
-
-

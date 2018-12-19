@@ -18,4 +18,5 @@ public interface Building {
     public Space[] sortSpaces();
     public Object clone() throws CloneNotSupportedException;
     Iterator<Floor> iterator();
+    String getClassName();
 }

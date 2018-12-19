@@ -68,7 +68,7 @@ public class Buildings {
         DataInputStream dis = new DataInputStream(in);
         String className;
         className = dis.readUTF();
-        if(className.equals("OfficeBuilding")){ //todo надо короч в зависимости от классИмя вызывать определенные методы фабрика гвгыггыгыгы
+        if(className.equals("OfficeBuilding")){
             setBuildingFactory(new OfficeFactory());
         } else if (className.equals("Dwelling")){
             setBuildingFactory(new DwellingFactory());

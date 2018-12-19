@@ -1,7 +1,7 @@
 package interfaces;
 
-//todo extends Cloneable
-public interface Space {
+//todo extends Cloneable +++
+public interface Space extends Cloneable {
     public int getRooms();
     public int getSquare();
     public void setRoom(int newCountOfRooms);

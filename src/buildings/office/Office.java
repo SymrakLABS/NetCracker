@@ -14,7 +14,7 @@ public class Office implements Space, Serializable, Cloneable {
 
     //конструктор по умолчанию
     public Office(){
-       this(DEFAULT_COUNT_ROOMS, DEFAULT_SQUARE);
+        this(DEFAULT_COUNT_ROOMS, DEFAULT_SQUARE);
     }
 
     //конструктор принимает площадь офиса
@@ -50,16 +50,13 @@ public class Office implements Space, Serializable, Cloneable {
 
     @Override
     public String toString(){
-<<<<<<< HEAD
+        //todo String.format() +++
         return String.format("Office (%d; %.1f)", countOfRooms, square);
-=======
-        //todo String.format()
-        return "Office (" + countOfRooms+ ", " + square + ")";
->>>>>>> ad9b837a97c31a232edcdd253468da34758c7593
     }
 
     @Override
     public boolean equals(Object obj) {
+        //todo return (square == other.square && countOfRooms == other.countOfRooms) +++
         if (this == obj)
             return true;
         if (obj == null)
@@ -67,7 +64,6 @@ public class Office implements Space, Serializable, Cloneable {
         if (!(obj instanceof Office))
             return false;
         Office other = (Office) obj;
-        //todo return (square == other.square && countOfRooms == other.countOfRooms)
         if (square != other.square)
             return false;
         if (countOfRooms != other.countOfRooms)
@@ -79,8 +75,8 @@ public class Office implements Space, Serializable, Cloneable {
     public int hashCode() {
         return countOfRooms ^ (int) Double.doubleToLongBits(square) >> 32 ^ (int) Double.doubleToLongBits(square);
     }
-<<<<<<< HEAD
 
+    //todo clone()? +++
     @Override
     public Object clone() throws CloneNotSupportedException {
         return super.clone();
@@ -90,7 +86,4 @@ public class Office implements Space, Serializable, Cloneable {
         return "Office";
     }
 
-=======
-    //todo clone()?
->>>>>>> ad9b837a97c31a232edcdd253468da34758c7593
 }

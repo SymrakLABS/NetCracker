@@ -60,16 +60,15 @@ public class OfficeBuilding implements Building, Serializable, Cloneable {
 
     //метод получения узла по его номеру
     private Node getNode(int index) {
-        if(checkIndex(index)){
-            if(head != null) {
-                Node current = head.next;
-                int j = 0;
-                while (current != head) {
-                    if (j++ == index) {
-                        return current;
-                    }
-                    current = current.next;
+        checkIndex(index); //todo просто вызываю
+        if(head != null) {
+            Node current = head.next;
+            int j = 0;
+            while (current != head) {
+                if (j++ == index) {
+                    return current;
                 }
+                current = current.next;
             }
         }
         return null;
@@ -77,45 +76,45 @@ public class OfficeBuilding implements Building, Serializable, Cloneable {
 
     //метод добавления узла в список по номеру
     private void addNode(int index, Node newNode){
-        if(checkIndex(index)){
-            if (index == 0 || (head == null)) {
-                if (head == null) {
-                    head = new Node(null, null, null);
-                    head.next = new Node(newNode.officeFloor, head, head);
-                    head.previous = head.next;
-                }
-                else {
-                    head.next = new Node(newNode.officeFloor, head.next, head);
-                }
+        checkIndex(index);
+        if (index == 0 || (head == null)) {
+            if (head == null) {
+                head = new Node(null, null, null);
+                head.next = new Node(newNode.officeFloor, head, head);
+                head.previous = head.next;
             }
             else {
-                Node current = this.getNode(index - 1);
-                current.next = new Node(newNode.officeFloor, current.next, current.previous);
+                head.next = new Node(newNode.officeFloor, head.next, head);
+            }
+        }
+        else {
+            Node current = this.getNode(index - 1);
+            current.next = new Node(newNode.officeFloor, current.next, current.previous);
+        }
+    }
+
+
+    //метод удаления узла из списка по его номеру
+    private void removeNode(int index){
+        checkIndex(index);
+        if (head != null) {
+            if (index != 0) {
+                Node current = getNode(index - 1);
+                current.next = current.next.next;
+                current.next.previous = current;
+            }
+            else if (head.next.next == head){
+                head.next = head;
+                head.previous = head;
+            }
+            else {
+                Node current = head.next;
+                head.next = current.next;
+                head.next.previous = head;
             }
         }
     }
 
-    //метод удаления узла из списка по его номеру
-    private void removeNode(int index){
-        if(checkIndex(index)){
-            if (head != null) {
-                if (index != 0) {
-                    Node current = getNode(index - 1);
-                    current.next = current.next.next;
-                    current.next.previous = current;
-                }
-                else if (head.next.next == head){
-                    head.next = head;
-                    head.previous = head;
-                }
-                else {
-                    Node current = head.next;
-                    head.next = current.next;
-                    head.next.previous = head;
-                }
-            }
-        }
-    }
 
     //метод получения общего количества этажей здания
     public int getSize() {
@@ -146,7 +145,7 @@ public class OfficeBuilding implements Building, Serializable, Cloneable {
 
     //метод получения общей площади помещений здания
     public int getSquare() {
-       return findParameter((p) -> p.getSquare() );
+        return findParameter((p) -> p.getSquare() );
     }
 
     //метод получения общего количества комнат здания
@@ -165,11 +164,11 @@ public class OfficeBuilding implements Building, Serializable, Cloneable {
         return officeFloor;
     }
 
-    private boolean checkIndex(int index){
+    //todo сдделал иначе
+    private void checkIndex(int index){
         if(index > size || index < 0){
             throw new FloorIndexOutOfBoundsException();
         }
-        return true;
     }
 
     //метод получения объекта этажа, по его номеру в здании
@@ -287,39 +286,40 @@ public class OfficeBuilding implements Building, Serializable, Cloneable {
 
     @Override
     public String toString() {
-        StringBuffer s = new StringBuffer();
-        Floor[] floors = getArrayOfFloors(); //todo не надо массивы юзать. Ходи по нодам
-        s.append("OfficeBuilding (").append(size).append(", ");
-        //todo StringBuilder
+        //todo не надо массивы юзать. Ходи по нодам +++
+        //todo StringBuilder +++
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("OfficeBuilding (").append(size);
         for (int i = 0; i < size; i++) {
-            if (i > 0) s.append(", ");
-            s.append(floors[i].toString());
+            stringBuilder.append(", ").append(getNode(i).officeFloor);
         }
-        s.append(")");
-        return s.toString();
+        stringBuilder.append(")");
+        return stringBuilder.toString();
     }
 
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (obj == null)
+        if (!(obj instanceof OfficeBuilding)) {
             return false;
-        if (!(obj instanceof OfficeBuilding))
+        }
+        //todo проверяешь сначала size, а потом каждый элемент последовательно +++
+        OfficeBuilding officeBuilding = (OfficeBuilding) obj;
+        if (officeBuilding.size != size) {
             return false;
-        OfficeBuilding other = (OfficeBuilding) obj;
-        //todo проверяешь сначала size, а потом каждый элемент последовательно
-        if (head == null) {
-            if (other.head != null)
+        }
+        for (int i = 0; i < size; i++) {
+            if (!officeBuilding.getNode(i).officeFloor.equals(getNode(i).officeFloor)) {
                 return false;
-        } else if (!head.equals(other.head))
-            return false;
+            }
+        }
         return true;
     }
 
     @Override
     public int hashCode() {
-<<<<<<< HEAD
+        //todo в вычислении хэшкода участвуют все элементы +++
         int hashCode = size;
         for (int i = 0; i < size; i++) {
             hashCode ^= getNode(i).officeFloor.hashCode();
@@ -327,6 +327,7 @@ public class OfficeBuilding implements Building, Serializable, Cloneable {
         return hashCode;
     }
 
+    //todo clone() +++
     @Override
     public Object clone(){
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(0xFFFF);
@@ -358,15 +359,5 @@ public class OfficeBuilding implements Building, Serializable, Cloneable {
                 return toReturn;
             }
         };
-=======
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((head == null) ? 0 : head.hashCode());
-        return result;
-        //todo в вычислении хэшкода участвуют все элементы
-
->>>>>>> ad9b837a97c31a232edcdd253468da34758c7593
     }
-    //todo clone()
-
 }

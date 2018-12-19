@@ -49,25 +49,20 @@ public class Flat implements Space, Serializable, Cloneable {
 
     @Override
     public String toString(){
-        //todo String.format()
-        return "Flat (" + countRoom + ", " + square + ")";
+        //todo String.format() +++
+        return String.format("Flat (%d; %.1f)", countRoom, square);
     }
 
     @Override
     public boolean equals(Object obj) {
+        //todo return (square == other.square && countOfRooms == other.countOfRooms) +++
         if (this == obj)
             return true;
-        if (obj == null)
+        if (!(obj instanceof Flat)) {
             return false;
-        if (!(obj instanceof Flat))
-            return false;
-        Flat other = (Flat) obj;
-        //todo return (square == other.square && countOfRooms == other.countOfRooms)
-        if (square != other.square)
-            return false;
-        if (countRoom != other.countRoom)
-            return false;
-        return true;
+        }
+        Flat flat = (Flat) obj;
+        return (flat.getSquare() == square && flat.getRooms() == countRoom);
     }
 
     @Override
@@ -76,24 +71,13 @@ public class Flat implements Space, Serializable, Cloneable {
     }
 
 
+    //todo не надо отлавливать CloneNotSupportedException здесь, прописывай это исключение в сигнатуре метода, +++
     @Override
-<<<<<<< HEAD
     public Object clone() throws CloneNotSupportedException {
         return super.clone();
     }
 
     public String getClassName(){
         return "Flat";
-=======
-    public Object clone() {
-        //todo не надо отлавливать CloneNotSupportedException здесь, прописывай это исключение в сигнатуре метода,
-        Object result;
-        try {
-            result = super.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new InternalError();
-        }
-        return result;
->>>>>>> ad9b837a97c31a232edcdd253468da34758c7593
     }
 }

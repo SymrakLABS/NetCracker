@@ -71,7 +71,7 @@ public class Dwelling implements Building, Serializable, Cloneable {
 
     //метод получения объекта этажа, по его номеру в доме
     public DwellingFloor getFloor(int number) {
-       return dwellingFloors[number];
+        return dwellingFloors[number];
     }
 
     //метод изменения этажа по его номеру в доме и ссылке на обновленный этаж
@@ -154,14 +154,9 @@ public class Dwelling implements Building, Serializable, Cloneable {
 
     @Override
     public String toString() {
-<<<<<<< HEAD
+        //todo StringBuilder +++
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Dwelling (").append(size);
-=======
-        //todo StringBuilder
-        StringBuffer s = new StringBuffer();
-        s.append("Dwelling (").append(size).append(", ");
->>>>>>> ad9b837a97c31a232edcdd253468da34758c7593
         for (int i = 0; i < size; i++) {
             stringBuilder.append(", ").append(dwellingFloors[i]);
         }
@@ -171,21 +166,21 @@ public class Dwelling implements Building, Serializable, Cloneable {
 
     @Override
     public boolean equals(Object obj) {
+        //todo Arrays.deepEquals(), а не просто equals() +++
         if (this == obj)
             return true;
-        if (obj == null)
+        if (!(obj instanceof Dwelling)) {
             return false;
-        if (!(obj instanceof Dwelling))
+        }
+        Dwelling dwelling = (Dwelling) obj;
+        if (dwelling.size != size) {
             return false;
-        Dwelling other = (Dwelling) obj;
-        if (!Arrays.equals(dwellingFloors, other.dwellingFloors))//todo Arrays.deepEquals(), а не просто equals()
-            return false;
-        return true;
+        }
+        return Arrays.deepEquals(dwelling.dwellingFloors, dwellingFloors);
     }
 
     @Override
     public int hashCode() {
-<<<<<<< HEAD
         int hashCode = size;
         for (int i = 0; i < size; i++) {
             hashCode ^= dwellingFloors[i].hashCode();
@@ -205,14 +200,7 @@ public class Dwelling implements Building, Serializable, Cloneable {
 
     public String getClassName(){
         return "Dwelling";
-=======
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Arrays.hashCode(dwellingFloors); //todo Arrays.deepHashCode(), а не просто hashCode()
-        return result;
->>>>>>> ad9b837a97c31a232edcdd253468da34758c7593
     }
-    //todo clone()
 
     public Floor[] toArray() {
         Floor[] dwellingFloorsCopy = new Floor[dwellingFloors.length];
