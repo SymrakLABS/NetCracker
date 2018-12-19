@@ -49,6 +49,7 @@ public class Flat implements Space, Serializable, Cloneable {
 
     @Override
     public String toString(){
+        //todo String.format()
         return "Flat (" + countRoom + ", " + square + ")";
     }
 
@@ -61,6 +62,7 @@ public class Flat implements Space, Serializable, Cloneable {
         if (!(obj instanceof Flat))
             return false;
         Flat other = (Flat) obj;
+        //todo return (square == other.square && countOfRooms == other.countOfRooms)
         if (square != other.square)
             return false;
         if (countRoom != other.countRoom)
@@ -75,11 +77,23 @@ public class Flat implements Space, Serializable, Cloneable {
 
 
     @Override
+<<<<<<< HEAD
     public Object clone() throws CloneNotSupportedException {
         return super.clone();
     }
 
     public String getClassName(){
         return "Flat";
+=======
+    public Object clone() {
+        //todo не надо отлавливать CloneNotSupportedException здесь, прописывай это исключение в сигнатуре метода,
+        Object result;
+        try {
+            result = super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new InternalError();
+        }
+        return result;
+>>>>>>> ad9b837a97c31a232edcdd253468da34758c7593
     }
 }

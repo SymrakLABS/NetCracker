@@ -154,8 +154,14 @@ public class Dwelling implements Building, Serializable, Cloneable {
 
     @Override
     public String toString() {
+<<<<<<< HEAD
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Dwelling (").append(size);
+=======
+        //todo StringBuilder
+        StringBuffer s = new StringBuffer();
+        s.append("Dwelling (").append(size).append(", ");
+>>>>>>> ad9b837a97c31a232edcdd253468da34758c7593
         for (int i = 0; i < size; i++) {
             stringBuilder.append(", ").append(dwellingFloors[i]);
         }
@@ -172,13 +178,14 @@ public class Dwelling implements Building, Serializable, Cloneable {
         if (!(obj instanceof Dwelling))
             return false;
         Dwelling other = (Dwelling) obj;
-        if (!Arrays.equals(dwellingFloors, other.dwellingFloors))
+        if (!Arrays.equals(dwellingFloors, other.dwellingFloors))//todo Arrays.deepEquals(), а не просто equals()
             return false;
         return true;
     }
 
     @Override
     public int hashCode() {
+<<<<<<< HEAD
         int hashCode = size;
         for (int i = 0; i < size; i++) {
             hashCode ^= dwellingFloors[i].hashCode();
@@ -198,7 +205,14 @@ public class Dwelling implements Building, Serializable, Cloneable {
 
     public String getClassName(){
         return "Dwelling";
+=======
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Arrays.hashCode(dwellingFloors); //todo Arrays.deepHashCode(), а не просто hashCode()
+        return result;
+>>>>>>> ad9b837a97c31a232edcdd253468da34758c7593
     }
+    //todo clone()
 
     public Floor[] toArray() {
         Floor[] dwellingFloorsCopy = new Floor[dwellingFloors.length];

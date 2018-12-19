@@ -130,6 +130,7 @@ public class Buildings {
     public static Building deserialaizeBuilding (InputStream in) throws IOException, ClassNotFoundException{
         ObjectInputStream inputStream = new ObjectInputStream(in);
         Object building = inputStream.readObject();
+        inputStream.close();
         return (Building) building;
     }
 

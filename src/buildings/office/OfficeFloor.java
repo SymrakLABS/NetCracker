@@ -144,6 +144,8 @@ public class OfficeFloor implements Floor, Serializable, Cloneable {
     }
 
     //проверка допустимого значения
+    //todo нужно его делать как процедуру. Если выбрасывается исключение то в вызывающем методе дальше процесс все равно не пойдет
+    //и, там где у тебя метод этот вызывался не нужно будет null возвращать
     private boolean checkIndex(int index){
         if(index > size && index < 0){
             throw new SpaceIndexOutOfBoundsException();
@@ -191,8 +193,9 @@ public class OfficeFloor implements Floor, Serializable, Cloneable {
 
     @Override
     public String toString(){
-        Space[] offices = getArraySpaces();
+        Space[] offices = getArraySpaces(); //todo не надо массивы юзать. Ходи по нодам
         StringBuffer s = new StringBuffer();
+        //todo StringBuilder
         s.append("OfficeFloor (").append(getArraySpaces().length).append(", ");
         for(int i = 0; i < size; i++) {
             if (i > 0 ){
@@ -213,6 +216,7 @@ public class OfficeFloor implements Floor, Serializable, Cloneable {
         if (!(obj instanceof OfficeFloor))
             return false;
         OfficeFloor other = (OfficeFloor) obj;
+        //todo проверяешь сначала size, а потом каждый элемент последовательно
         if (head == null) {
             if (other.head != null)
                 return false;
@@ -223,6 +227,7 @@ public class OfficeFloor implements Floor, Serializable, Cloneable {
 
     @Override
     public int hashCode() {
+<<<<<<< HEAD
         int hashCode = size;
         for (int i = 0; i < size; i++) {
             hashCode ^= getNode(i).office.hashCode();
@@ -279,4 +284,13 @@ public class OfficeFloor implements Floor, Serializable, Cloneable {
         };
     }
 
+=======
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((head == null) ? 0 : head.hashCode());
+        //todo в вычислении хэшкода участвуют все элементы
+        return result;
+    }
+    //todo clone()
+>>>>>>> ad9b837a97c31a232edcdd253468da34758c7593
 }
