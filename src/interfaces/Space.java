@@ -5,4 +5,6 @@ public interface Space {
     public int getSquare();
     public void setRoom(int newCountOfRooms);
     public void setSquare(int newSquare);
+    public Object clone() throws CloneNotSupportedException;
+    public String getClassName();
 }

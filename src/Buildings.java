@@ -1,3 +1,4 @@
+import factory.DwellingFactory;
 import factory.OfficeFactory;
 import interfaces.Building;
 import interfaces.BuildingFactory;
@@ -11,7 +12,7 @@ import java.util.Scanner;
 
 public class Buildings {
 
-    private static BuildingFactory buildingFactory = new OfficeFactory();
+    private static BuildingFactory buildingFactory;
 
     public static void setBuildingFactory(BuildingFactory buildingFactory) {
         Buildings.buildingFactory = buildingFactory;
@@ -44,12 +45,17 @@ public class Buildings {
     //метод записи данных о здании в байтовый поток
     public static void outputBuilding(Building building, OutputStream out) throws IOException {
         DataOutputStream dos = new DataOutputStream(out);
+
+        dos.writeUTF(building.getClassName());
         dos.writeInt(building.getSize());
+        //System.out.println(building.getClassName());
         for (Object floorObj : building.getArrayOfFloors()) {
             Floor floor = (Floor) floorObj;
+            dos.writeUTF(floor.getClassName());
             dos.writeInt(floor.getSize());
             for (Object spaceObj : floor.getArraySpaces()) {
                 Space space = (Space) spaceObj;
+                dos.writeUTF(space.getClassName());
                 dos.writeInt(space.getSquare());
                 dos.writeInt(space.getRooms());
             }
@@ -60,10 +66,19 @@ public class Buildings {
     //метод чтения данных о здании из байтового потока
     public static Building inputBuilding (InputStream in) throws IOException {
         DataInputStream dis = new DataInputStream(in);
+        String className;
+        className = dis.readUTF();
+        if(className.equals("OfficeBuilding")){ //todo надо короч в зависимости от классИмя вызывать определенные методы фабрика гвгыггыгыгы
+            setBuildingFactory(new OfficeFactory());
+        } else if (className.equals("Dwelling")){
+            setBuildingFactory(new DwellingFactory());
+        }
         Floor[] floors = new Floor[dis.readInt()];
         for(int i = 0, sizeFloors = floors.length; i < sizeFloors; i++) {
+            className = dis.readUTF();
             Space[] flats = new Space[dis.readInt()];
             for (int j = 0, sizeFlats = flats.length; j < sizeFlats; j++) {
+                className = dis.readUTF();
                 flats[j] = buildingFactory.createSpace(dis.readInt(), dis.readInt());
             }
             floors[i] = buildingFactory.createFloor(flats);
@@ -108,7 +123,7 @@ public class Buildings {
     public static void serializeBuilding (Building building, OutputStream out) throws IOException{
         ObjectOutputStream outputStream = new ObjectOutputStream(out);
         outputStream.writeObject(building);
-        outputStream.close();
+        outputStream.flush();
     }
 
     //метод десериализации здания из байтового потока

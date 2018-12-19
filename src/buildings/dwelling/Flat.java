@@ -2,7 +2,9 @@ package buildings.dwelling;
 
 import interfaces.Space;
 
-public class Flat implements Space {
+import java.io.Serializable;
+
+public class Flat implements Space, Serializable, Cloneable {
     private static final int DEFAULT_SQUARE = 50;
     private static final int DEFAULT_COUNT_ROOMS = 2;
 
@@ -68,24 +70,16 @@ public class Flat implements Space {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        long temp;
-        temp = Double.doubleToLongBits(square);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
-        result = prime * result + countRoom;
-        return result;
+        return countRoom ^ (int) Double.doubleToLongBits(square) >> 32 ^ (int) Double.doubleToLongBits(square);
     }
 
 
     @Override
-    public Object clone() {
-        Object result;
-        try {
-            result = super.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new InternalError();
-        }
-        return result;
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
+
+    public String getClassName(){
+        return "Flat";
     }
 }

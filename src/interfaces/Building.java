@@ -1,5 +1,7 @@
 package interfaces;
 
+import java.util.Iterator;
+
 public interface Building {
     public int getSize();
     public int getSpaces();
@@ -14,4 +16,6 @@ public interface Building {
     public void deleteSpace(int index);
     public Space getBestSpace();
     public Space[] sortSpaces();
+    public Object clone() throws CloneNotSupportedException;
+    Iterator<Floor> iterator();
 }

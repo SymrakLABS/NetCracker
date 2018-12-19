@@ -1,14 +1,17 @@
 package buildings.dwelling;
 
+import buildings.office.Office;
 import interfaces.Building;
 import interfaces.Floor;
 import interfaces.Space;
 
+import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Iterator;
 
-public class Dwelling implements Building {
+public class Dwelling implements Building, Serializable, Cloneable {
 
-    DwellingFloor[] dwellingFloors;
+    protected DwellingFloor[] dwellingFloors;
     private int size;
 
     //конструктор, принимающий массив этажей дома
@@ -115,8 +118,8 @@ public class Dwelling implements Building {
     }
 
     //метод получения самой большой по площади квартиры дома
-    public Flat getBestSpace() {
-        Flat bestSpaceFlat = new Flat();
+    public Space getBestSpace() {
+        Space bestSpaceFlat = new Flat();
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < dwellingFloors[i].flats.length; j++) {
                 bestSpaceFlat = dwellingFloors[i].getBestSpace();
@@ -151,14 +154,13 @@ public class Dwelling implements Building {
 
     @Override
     public String toString() {
-        StringBuffer s = new StringBuffer();
-        s.append("Dwelling (").append(size).append(", ");
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("Dwelling (").append(size);
         for (int i = 0; i < size; i++) {
-            if (i > 0) s.append(", ");
-            s.append(dwellingFloors[i].toString());
+            stringBuilder.append(", ").append(dwellingFloors[i]);
         }
-        s.append(")");
-        return s.toString();
+        stringBuilder.append(")");
+        return stringBuilder.toString();
     }
 
     @Override
@@ -177,10 +179,48 @@ public class Dwelling implements Building {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Arrays.hashCode(dwellingFloors);
-        return result;
+        int hashCode = size;
+        for (int i = 0; i < size; i++) {
+            hashCode ^= dwellingFloors[i].hashCode();
+        }
+        return hashCode;
     }
 
+    @Override
+    public Object clone() throws CloneNotSupportedException{
+        Dwelling clone = (Dwelling) super.clone();
+        clone.dwellingFloors = dwellingFloors.clone();
+        for (int i = 0; i < size; i++) {
+            clone.dwellingFloors[i] = (DwellingFloor) dwellingFloors[i].clone();
+        }
+        return clone;
+    }
+
+    public String getClassName(){
+        return "Dwelling";
+    }
+
+    public Floor[] toArray() {
+        Floor[] dwellingFloorsCopy = new Floor[dwellingFloors.length];
+        for (int i = 0; i < size; i++) {
+            dwellingFloorsCopy[i] = dwellingFloors[i];
+        }
+        return dwellingFloorsCopy;
+    }
+
+    @Override
+    public Iterator<Floor> iterator() {
+        return new Iterator<Floor>() {
+            private int currentInd = 0;
+            @Override
+            public boolean hasNext() {
+                return currentInd < size && dwellingFloors[currentInd] != null;
+            }
+
+            @Override
+            public Floor next() {
+                return dwellingFloors[currentInd++];
+            }
+        };
+    }
 }

@@ -7,10 +7,11 @@ import interfaces.Building;
 import interfaces.Floor;
 import interfaces.Space;
 
-import java.io.Serializable;
+import java.io.*;
+import java.util.Iterator;
 import java.util.function.Function;
 
-public class OfficeBuilding implements Building, Serializable {
+public class OfficeBuilding implements Building, Serializable, Cloneable {
 
     private static class Node implements Serializable {
         Node next;
@@ -279,6 +280,11 @@ public class OfficeBuilding implements Building, Serializable {
         return temp;
     }
 
+    public String getClassName(){
+        return "OfficeBuilding";
+    }
+
+
     @Override
     public String toString() {
         StringBuffer s = new StringBuffer();
@@ -311,9 +317,43 @@ public class OfficeBuilding implements Building, Serializable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((head == null) ? 0 : head.hashCode());
-        return result;
+        int hashCode = size;
+        for (int i = 0; i < size; i++) {
+            hashCode ^= getNode(i).officeFloor.hashCode();
+        }
+        return hashCode;
+    }
+
+    @Override
+    public Object clone(){
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(0xFFFF);
+        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
+             ObjectInputStream objectInputStream = new ObjectInputStream(new ByteArrayInputStream(byteArrayOutputStream.toByteArray()))) {
+            objectOutputStream.writeObject(this);
+            OfficeBuilding clone = (OfficeBuilding) objectInputStream.readObject();
+            return clone;
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public Iterator<Floor> iterator() {
+        return new Iterator<Floor>() {
+            private Node node = head.next;
+
+            @Override
+            public boolean hasNext() {
+                return node != head;
+            }
+
+            @Override
+            public Floor next() {
+                Floor toReturn = node.officeFloor;
+                node = node.next;
+                return toReturn;
+            }
+        };
     }
 }

@@ -4,9 +4,10 @@ import exceptions.SpaceIndexOutOfBoundsException;
 import interfaces.Floor;
 import interfaces.Space;
 
-import java.io.Serializable;
+import java.io.*;
+import java.util.Iterator;
 
-public class OfficeFloor implements Floor, Serializable {
+public class OfficeFloor implements Floor, Serializable, Cloneable {
 
     private static class Node implements Serializable{
         Node next;
@@ -222,9 +223,60 @@ public class OfficeFloor implements Floor, Serializable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((head == null) ? 0 : head.hashCode());
-        return result;
+        int hashCode = size;
+        for (int i = 0; i < size; i++) {
+            hashCode ^= getNode(i).office.hashCode();
+        }
+        return hashCode;
     }
+
+    @Override
+    public Object clone() {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(0xFFFF);
+        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
+             ObjectInputStream objectInputStream = new ObjectInputStream(new ByteArrayInputStream(byteArrayOutputStream.toByteArray()))) {
+            objectOutputStream.writeObject(this);
+            OfficeFloor clone = (OfficeFloor) objectInputStream.readObject();
+            return clone;
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public String getClassName(){
+        return "OfficeFloor";
+    }
+
+
+    @Override
+    public int compareTo(Floor o) {
+        if (o instanceof OfficeFloor) {
+            if (this.equals(o)) {
+                return 0;
+            } else {
+                return this.getSize() - o.getSize();
+            }
+        }
+        return Integer.MIN_VALUE;
+    }
+
+    @Override
+    public Iterator<Space> iterator() {
+        return new Iterator<Space>() {
+            private Node currentNode = head.next;
+            @Override
+            public boolean hasNext() {
+                return currentNode != head;
+            }
+
+            @Override
+            public Space next() {
+                Space toReturn = currentNode.office;
+                currentNode = currentNode.next;
+                return toReturn;
+            }
+        };
+    }
+
 }

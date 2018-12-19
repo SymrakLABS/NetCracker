@@ -3,9 +3,11 @@ package buildings.dwelling;
 import interfaces.Floor;
 import interfaces.Space;
 
+import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Iterator;
 
-public class DwellingFloor implements Floor {
+public class DwellingFloor implements Floor, Cloneable, Serializable {
 
     Flat[] flats;
     private int size;
@@ -109,16 +111,13 @@ public class DwellingFloor implements Floor {
 
     @Override
     public String toString(){
-        StringBuffer s = new StringBuffer();
-        s.append("DwellingFloor (").append(getArraySpaces().length).append(", ");
-        for(int i = 0; i < size; i++) {
-            if (i > 0 ){
-                s.append(", ");
-            }
-            s.append(flats[i].toString());
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("DwellinFloor (").append(size);
+        for (int i = 0; i < size; i++) {
+            stringBuilder.append(", ").append(flats[i]);
         }
-        s.append(")");
-        return s.toString();
+        stringBuilder.append(")");
+        return stringBuilder.toString();
     }
 
     @Override
@@ -137,10 +136,61 @@ public class DwellingFloor implements Floor {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Arrays.hashCode(flats);
-        return result;
+        int hashCode = size;
+        for (int i = 0; i < size; i++) {
+            hashCode ^= flats[i].hashCode();
+        }
+        return hashCode;
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException{
+        DwellingFloor dwellingFloor = (DwellingFloor) super.clone();
+        dwellingFloor.flats = flats.clone();
+        for (int i = 0; i < size; i++) {
+            dwellingFloor.flats[i] = (Flat) flats[i].clone();
+        }
+        return dwellingFloor;
+    }
+
+    public String getClassName(){
+        return "DwellingFloor";
+    }
+
+    public Space[] toArray() {
+        Space[] flatsCopy = new Space[size];
+        for (int i = 0; i < size; i++) {
+            flatsCopy[i] = flats[i];
+        }
+        return flatsCopy;
+    }
+
+    @Override
+    public int compareTo(Floor o) {
+        if (o instanceof DwellingFloor) {
+            if (this.equals(o)) {
+                return 0;
+            } else {
+                return this.getSize() - o.getSize();
+            }
+        }
+        return Integer.MIN_VALUE;
+    }
+
+    @Override
+    public Iterator<Space> iterator() {
+        return new Iterator<Space>() {
+            private int currentInd = 0;
+            @Override
+            public boolean hasNext() {
+                return currentInd < size && flats[currentInd] != null;
+            }
+
+            @Override
+            public Space next() {
+                return flats[currentInd++];
+            }
+        };
     }
 
 }

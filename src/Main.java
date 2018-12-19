@@ -1,3 +1,5 @@
+import buildings.dwelling.hotel.Hotel;
+import buildings.dwelling.hotel.HotelFloor;
 import buildings.office.Office;
 import buildings.office.OfficeBuilding;
 import buildings.office.OfficeFloor;
@@ -8,6 +10,10 @@ import java.util.Scanner;
 public class Main {
 
     public static void main(String[] args) {
+
+
+
+
 
         Office a = new Office(1,6);
         Office b = new Office(90,6);
@@ -31,6 +37,10 @@ public class Main {
         OfficeBuilding building1 = new OfficeBuilding(of1);
         OfficeBuilding building = new OfficeBuilding(of);
 
+        OfficeFloor officeFloor123 = (OfficeFloor) dwellingFloor1.clone();
+
+        System.out.println(officeFloor123);
+
 
         OfficeFloor n = new OfficeFloor(2);
         n.addSpace(0, a);
@@ -50,10 +60,23 @@ public class Main {
             Buildings.outputBuilding(building1, fos);
         } catch (FileNotFoundException exp){
             exp.printStackTrace();
-        } catch (IOException exp){
+        } catch (IOException exp) {
             exp.printStackTrace();
         }
 
+        try{
+            InputStream reader = new FileInputStream("C:\\Users\\Symrak\\Desktop\\q.dat");
+            OfficeBuilding ob = (OfficeBuilding) Buildings.inputBuilding(reader);
+
+            System.out.println(ob);
+
+        } catch (FileNotFoundException exp){
+            exp.printStackTrace();
+        } catch (IOException exp) {
+            exp.printStackTrace();
+        }
+
+        /*
 
         try{
             InputStream reader = new FileInputStream("C:\\Users\\Symrak\\Desktop\\q.dat");
@@ -61,7 +84,7 @@ public class Main {
 
             for(int i = 0; i < ob.getSize(); i++){
                 for(int j = 0; j < ob.getFloor(i).getSize(); j++){
-                    System.out.println(ob.getFloor(i).getSpace(j).getRooms());
+                    //System.out.println(ob.getFloor(i).getSpace(j).getRooms());
                 }
             }
 
@@ -86,10 +109,12 @@ public class Main {
             File file = new File("C:\\Users\\Symrak\\Desktop\\q.txt");
             Scanner in = new Scanner(file);
             OfficeBuilding ob = (OfficeBuilding) Buildings.readBuilding(in);
-            System.out.println(ob);
+            //System.out.println(ob);
         } catch (FileNotFoundException exp){
             exp.printStackTrace();
         }
+
+     */
 
     }
 
