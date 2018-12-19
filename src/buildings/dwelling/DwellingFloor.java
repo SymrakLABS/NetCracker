@@ -109,6 +109,7 @@ public class DwellingFloor implements Floor {
 
     @Override
     public String toString(){
+        //todo StringBuilder
         StringBuffer s = new StringBuffer();
         s.append("DwellingFloor (").append(getArraySpaces().length).append(", ");
         for(int i = 0; i < size; i++) {
@@ -130,7 +131,8 @@ public class DwellingFloor implements Floor {
         if (!(obj instanceof DwellingFloor))
             return false;
         DwellingFloor other = (DwellingFloor) obj;
-        if (!Arrays.equals(flats, other.flats))
+
+        if (!Arrays.equals(flats, other.flats)) //todo Arrays.deepEquals(), а не просто equals()
             return false;
         return true;
     }
@@ -139,10 +141,10 @@ public class DwellingFloor implements Floor {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + Arrays.hashCode(flats);
+        result = prime * result + Arrays.hashCode(flats);//todo Arrays.deepHashCode(), а не просто hashCode()
         return result;
     }
-
+    //todo clone()
 }
 
 

@@ -151,6 +151,7 @@ public class Dwelling implements Building {
 
     @Override
     public String toString() {
+        //todo StringBuilder
         StringBuffer s = new StringBuffer();
         s.append("Dwelling (").append(size).append(", ");
         for (int i = 0; i < size; i++) {
@@ -170,7 +171,7 @@ public class Dwelling implements Building {
         if (!(obj instanceof Dwelling))
             return false;
         Dwelling other = (Dwelling) obj;
-        if (!Arrays.equals(dwellingFloors, other.dwellingFloors))
+        if (!Arrays.equals(dwellingFloors, other.dwellingFloors))//todo Arrays.deepEquals(), а не просто equals()
             return false;
         return true;
     }
@@ -179,8 +180,9 @@ public class Dwelling implements Building {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + Arrays.hashCode(dwellingFloors);
+        result = prime * result + Arrays.hashCode(dwellingFloors); //todo Arrays.deepHashCode(), а не просто hashCode()
         return result;
     }
+    //todo clone()
 
 }

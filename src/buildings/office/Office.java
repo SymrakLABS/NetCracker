@@ -50,6 +50,7 @@ public class Office implements Space, Serializable {
 
     @Override
     public String toString(){
+        //todo String.format()
         return "Office (" + countOfRooms+ ", " + square + ")";
     }
 
@@ -62,6 +63,7 @@ public class Office implements Space, Serializable {
         if (!(obj instanceof Office))
             return false;
         Office other = (Office) obj;
+        //todo return (square == other.square && countOfRooms == other.countOfRooms)
         if (square != other.square)
             return false;
         if (countOfRooms != other.countOfRooms)
@@ -79,4 +81,5 @@ public class Office implements Space, Serializable {
         result = prime * result + countOfRooms;
         return result;
     }
+    //todo clone()?
 }

@@ -47,6 +47,7 @@ public class Flat implements Space {
 
     @Override
     public String toString(){
+        //todo String.format()
         return "Flat (" + countRoom + ", " + square + ")";
     }
 
@@ -59,6 +60,7 @@ public class Flat implements Space {
         if (!(obj instanceof Flat))
             return false;
         Flat other = (Flat) obj;
+        //todo return (square == other.square && countOfRooms == other.countOfRooms)
         if (square != other.square)
             return false;
         if (countRoom != other.countRoom)
@@ -80,6 +82,7 @@ public class Flat implements Space {
 
     @Override
     public Object clone() {
+        //todo не надо отлавливать CloneNotSupportedException здесь, прописывай это исключение в сигнатуре метода,
         Object result;
         try {
             result = super.clone();

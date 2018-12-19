@@ -282,8 +282,9 @@ public class OfficeBuilding implements Building, Serializable {
     @Override
     public String toString() {
         StringBuffer s = new StringBuffer();
-        Floor[] floors = getArrayOfFloors();
+        Floor[] floors = getArrayOfFloors(); //todo не надо массивы юзать. Ходи по нодам
         s.append("OfficeBuilding (").append(size).append(", ");
+        //todo StringBuilder
         for (int i = 0; i < size; i++) {
             if (i > 0) s.append(", ");
             s.append(floors[i].toString());
@@ -301,6 +302,7 @@ public class OfficeBuilding implements Building, Serializable {
         if (!(obj instanceof OfficeBuilding))
             return false;
         OfficeBuilding other = (OfficeBuilding) obj;
+        //todo проверяешь сначала size, а потом каждый элемент последовательно
         if (head == null) {
             if (other.head != null)
                 return false;
@@ -315,5 +317,9 @@ public class OfficeBuilding implements Building, Serializable {
         int result = 1;
         result = prime * result + ((head == null) ? 0 : head.hashCode());
         return result;
+        //todo в вычислении хэшкода участвуют все элементы
+
     }
+    //todo clone()
+
 }
