@@ -1,108 +1,101 @@
-import factory.DwellingFactory;
-import factory.OfficeFactory;
+import factories.DwellingFactory;
+import factories.OfficeFactory;
 import interfaces.Building;
 import interfaces.BuildingFactory;
 import interfaces.Floor;
 import interfaces.Space;
 
 import java.io.*;
+import java.util.Arrays;
 import java.util.Formatter;
 import java.util.Locale;
 import java.util.Scanner;
 
 public class Buildings {
 
-    private static BuildingFactory buildingFactory;
+    private static BuildingFactory buildingFactory = new OfficeFactory();
 
     public static void setBuildingFactory(BuildingFactory buildingFactory) {
         Buildings.buildingFactory = buildingFactory;
     }
 
-    public Space createSpace(int square) {
-        return buildingFactory.createSpace(square);
-    }
-
-    public Space createSpace(int roomsCount, int square) {
+    private static Space createSpace(double square, int roomsCount) {
         return buildingFactory.createSpace(roomsCount, square);
     }
 
-    public Floor createFloor(int spacesCount) {
+    private static Floor createFloor(int spacesCount) {
         return buildingFactory.createFloor(spacesCount);
     }
 
-    public Floor createFloor(Space[] spaces) {
+    private static Space createSpace(int square) {
+        return buildingFactory.createSpace(square);
+    }
+
+
+    private static Floor createFloor(Space[] spaces) {
         return buildingFactory.createFloor(spaces);
     }
 
-    public Building createBuilding(int floorsCount, int[] spacesCounts) {
+    private static Building createBuilding(int floorsCount, int[] spacesCounts) {
         return buildingFactory.createBuilding(floorsCount, spacesCounts);
     }
 
-    public Building createBuilding(Floor[] floors) {
+    private static Building createBuilding(Floor[] floors) {
         return buildingFactory.createBuilding(floors);
     }
 
-    //метод записи данных о здании в байтовый поток
-    public static void outputBuilding(Building building, OutputStream out) throws IOException {
-        DataOutputStream dos = new DataOutputStream(out);
 
-        dos.writeUTF(building.getClassName());
-        dos.writeInt(building.getSize());
-        //System.out.println(building.getClassName());
-        for (Object floorObj : building.getArrayOfFloors()) {
-            Floor floor = (Floor) floorObj;
-            dos.writeUTF(floor.getClassName());
-            dos.writeInt(floor.getSize());
-            for (Object spaceObj : floor.getArraySpaces()) {
-                Space space = (Space) spaceObj;
-                dos.writeUTF(space.getClassName());
-                dos.writeInt(space.getSquare());
-                dos.writeInt(space.getRooms());
+    //метод записи данных о здании в байтовый поток
+    public static void outputBuilding(Building building, OutputStream outputStream) throws IOException {
+        DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
+        int sizeOfBuilding = building.getSize();
+        dataOutputStream.writeInt(sizeOfBuilding);
+        for (int i = 0; i < sizeOfBuilding; i++) {
+            Floor floor = building.getFloor(i);
+            int sizeOfFloor = floor.getSize();
+            dataOutputStream.writeInt(sizeOfFloor);
+            for (int j = 0; j < sizeOfFloor; j++) {
+                Space space = floor.getSpace(j);
+                dataOutputStream.writeInt(space.getRooms());
+                dataOutputStream.writeDouble(space.getSquare());
             }
         }
-        dos.close();
+        dataOutputStream.flush();
     }
 
     //метод чтения данных о здании из байтового потока
     public static Building inputBuilding (InputStream in) throws IOException {
-        DataInputStream dis = new DataInputStream(in);
-        String className;
-        className = dis.readUTF();
-        if(className.equals("OfficeBuilding")){
-            setBuildingFactory(new OfficeFactory());
-        } else if (className.equals("Dwelling")){
-            setBuildingFactory(new DwellingFactory());
-        }
-        Floor[] floors = new Floor[dis.readInt()];
-        for(int i = 0, sizeFloors = floors.length; i < sizeFloors; i++) {
-            className = dis.readUTF();
-            Space[] flats = new Space[dis.readInt()];
-            for (int j = 0, sizeFlats = flats.length; j < sizeFlats; j++) {
-                className = dis.readUTF();
-                flats[j] = buildingFactory.createSpace(dis.readInt(), dis.readInt());
+        DataInputStream dataInputStream = new DataInputStream(in);
+        int sizeOfBuilding = dataInputStream.readInt();
+        Floor[] floors = new Floor[sizeOfBuilding];
+        for (int i = 0; i < sizeOfBuilding; i++) {
+            int sizeOfFloor = dataInputStream.readInt();
+            floors[i] = createFloor(sizeOfFloor);
+            for (int j = 0; j < sizeOfFloor; j++) {
+                int roomCount = dataInputStream.readInt();
+                int square = dataInputStream.readInt();
+                floors[i].setSpace(j, createSpace(square, roomCount));
             }
-            floors[i] = buildingFactory.createFloor(flats);
         }
-        dis.close();
-        return buildingFactory.createBuilding(floors);
+        return createBuilding(floors);
     }
 
     //метод записи здания в символьный поток
     public static void writeBuilding (Building building, Writer out) {
-        PrintWriter pwo = new PrintWriter(out);
-        Floor floor;
-        Space space;
-        pwo.print(building.getSize() + " ");
-        for(int i = 0, floorsAmount = building.getSize(); i < floorsAmount; i++) {
-            floor = building.getFloor(i);
-            pwo.print(floor.getSize() + " ");
-            for (int j = 0, spacesAmount = floor.getSize(); j < spacesAmount; j++) {
-                space = floor.getSpace(j);
-                pwo.print(space.getSquare() + " ");
-                pwo.print(space.getRooms() + " ");
+        PrintWriter printWriter = new PrintWriter(out);
+        int sizeOfBuilding = building.getSize();
+        printWriter.println(sizeOfBuilding);
+        for (int i = 0; i < sizeOfBuilding; i++) {
+            Floor floor = building.getFloor(i);
+            int sizeOfFloor = floor.getSize();
+            printWriter.println(sizeOfFloor);
+            for (int j = 0; j < sizeOfFloor; j++) {
+                Space space = floor.getSpace(j);
+                printWriter.println(space.getRooms());
+                printWriter.println(space.getSquare());
             }
         }
-        pwo.close();
+        printWriter.flush();
     }
 
     //метод чтения здания из символьного потока
@@ -136,38 +129,92 @@ public class Buildings {
 
     //метод текстовой форматированной записи
     public static void writeBuildingFormat (Building building, Writer out) throws IOException {
-        Formatter formatter = new Formatter(new Locale("English"));
-        Floor floors[] =  building.getArrayOfFloors();
-        formatter.format("%d ", floors.length);
-        for (Floor floor : building.getArrayOfFloors()) {
-            formatter.format("%d ", floor.getSize());
-            for (Space space : floor.getArraySpaces()) {
-                formatter.format("%d %d ", space.getRooms(), space.getSquare());
+        PrintWriter printWriter = new PrintWriter(out);
+        int sizeOfBuilding = building.getSize();
+        printWriter.printf("%d ", sizeOfBuilding);
+        for (int i = 0; i < sizeOfBuilding; i++) {
+            Floor floor = building.getFloor(i);
+            int sizeOfFloor = floor.getSize();
+            printWriter.printf("%d ", sizeOfFloor);
+            for (int j = 0; j < sizeOfFloor; j++) {
+                Space space = floor.getSpace(i);
+                printWriter.printf("%d ", space.getRooms());
+                printWriter.printf("%f ", space.getSquare());
             }
         }
-
-        out.write(formatter.format("\n").toString());
-        out.close();
+        printWriter.flush();
     }
 
     //метод текстового чтения
-    public static Building readBuilding(Scanner in) {
-        Building building;
-        int floorCount = in.nextInt();
-        Floor[] floors = new Floor[floorCount];
-        for (int i = 0; i < floorCount; i++) {
-            int spacesCount = in.nextInt();
-            Space[] spaces = new Space[spacesCount];
-            for (int j = 0; j < spacesCount; j++) {
-                int roomCount = in.nextInt();
-                int area = in.nextInt();
-                spaces[j] = buildingFactory.createSpace(roomCount, area);
+    public static Building readBuilding(Scanner scanner) {
+        int sizeOfBuilding = scanner.nextInt();
+        Floor[] floors = new Floor[sizeOfBuilding];
+        for (int i = 0; i < sizeOfBuilding; i++) {
+            int sizeOfFloor = scanner.nextInt();
+            floors[i] = createFloor(sizeOfFloor);
+            for (int j = 0; j < sizeOfFloor; j++) {
+                int roomCount = scanner.nextInt();
+                double area = scanner.nextDouble();
+                floors[i].addSpace(j, createSpace(area, roomCount));
             }
-
-            floors[i] = buildingFactory.createFloor(spaces);
         }
-        building = buildingFactory.createBuilding(floors);
-        in.close();
-        return building;
+        return createBuilding(floors);
+    }
+
+    //метод сортировки помещений этажа по возрастанию площадей помещений
+    private static Space[] sortSpace(Floor floor) {
+        Space[] sortedSpaces = floor.getArraySpaces();
+        Arrays.sort(sortedSpaces);
+        return sortedSpaces;
+    }
+
+    //метод сортировки этажей здания по возрастанию количества помещений на этаже
+    private static Floor[] sortFloor(Building building) {
+        Floor[] sortedFloors = building.getArrayOfFloors();
+        Arrays.sort(sortedFloors);
+        return sortedFloors;
+    }
+
+    //параметризованный метод
+    public static <T, V> V[] sortByAscending(T object) {
+        if (object instanceof Floor) {
+            Floor floor = (Floor) object;
+            return (V[]) sortSpace(floor);
+        } else {
+            if (object instanceof Building) {
+                Building building = (Building) object;
+                return (V[]) sortFloor(building);
+            }
+        }
+        return null;
+    }
+
+    private static Space[] sortSpaceWithCriterion(Floor floor) {
+        Space[] sortedSpaces = floor.getArraySpaces();
+        Arrays.sort(sortedSpaces,(space1, space2) -> (space2.compareTo(space1)));
+        return sortedSpaces;
+    }
+
+    private static Floor[] sortFloorWithCriterion(Building building) {
+        Floor[] floors = building.getArrayOfFloors();
+        Arrays.sort(floors, (floor1, floor2) -> (floor2.compareTo(floor1)));
+        return floors;
+    }
+
+    public static <T, V> V[] sortByDescending(T object) {
+        if (object instanceof Floor) {
+            Floor floor = (Floor) object;
+            return (V[]) sortSpaceWithCriterion(floor);
+        } else {
+            if (object instanceof Building) {
+                Building building = (Building) object;
+                return (V[]) sortFloorWithCriterion(building);
+            }
+        }
+        return null;
+    }
+
+    public static SynchronizedFloor synchronizedFloor(Floor floor) {
+        return new SynchronizedFloor(floor);
     }
 }

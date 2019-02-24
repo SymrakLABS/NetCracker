@@ -1,6 +1,5 @@
 package buildings.dwelling;
 
-import buildings.office.Office;
 import interfaces.Building;
 import interfaces.Floor;
 import interfaces.Space;
@@ -11,11 +10,11 @@ import java.util.Iterator;
 
 public class Dwelling implements Building, Serializable, Cloneable {
 
-    protected DwellingFloor[] dwellingFloors;
+    protected Floor[] dwellingFloors;
     private int size;
 
     //конструктор, принимающий массив этажей дома
-    public Dwelling(DwellingFloor[] dwellingFloors) {
+    public Dwelling(Floor[] dwellingFloors) {
         this.dwellingFloors = dwellingFloors;
         size = dwellingFloors.length;
     }
@@ -47,7 +46,7 @@ public class Dwelling implements Building, Serializable, Cloneable {
     }
 
     //метод получения общей площади квартир дома
-    public int getSquare() {
+    public double getSquare() {
         int squareFlatsBuild = 0;
         for (int j = 0; j < dwellingFloors.length; j++) {
             squareFlatsBuild += dwellingFloors[j].getSquare();
@@ -65,12 +64,12 @@ public class Dwelling implements Building, Serializable, Cloneable {
     }
 
     //метод получения массива этажей жилого дома
-    public DwellingFloor[] getArrayOfFloors() {
+    public Floor[] getArrayOfFloors() {
         return dwellingFloors;
     }
 
     //метод получения объекта этажа, по его номеру в доме
-    public DwellingFloor getFloor(int number) {
+    public Floor getFloor(int number) {
         return dwellingFloors[number];
     }
 
@@ -96,7 +95,7 @@ public class Dwelling implements Building, Serializable, Cloneable {
     //метод получения объекта квартиры по ее номеру в доме
     public Flat getSpace(int number){
         FinderFlat finderFlat = findFlatByNumber(number);
-        return dwellingFloors[finderFlat.getFloorNumber()].getSpace(finderFlat.getFlatNumber());
+        return (Flat)dwellingFloors[finderFlat.getFloorNumber()].getSpace(finderFlat.getFlatNumber());
     }
 
     //метод изменения объекта квартиры по ее номеру в доме и ссылке типа квартиры
@@ -121,7 +120,7 @@ public class Dwelling implements Building, Serializable, Cloneable {
     public Space getBestSpace() {
         Space bestSpaceFlat = new Flat();
         for (int i = 0; i < size; i++) {
-            for (int j = 0; j < dwellingFloors[i].flats.length; j++) {
+            for (int j = 0; j < dwellingFloors[i].getArraySpaces().length; j++) {
                 bestSpaceFlat = dwellingFloors[i].getBestSpace();
             }
         }
@@ -129,8 +128,8 @@ public class Dwelling implements Building, Serializable, Cloneable {
     }
 
     //метод получения отсортированного по убыванию площадей массива квартир
-    public Flat[] sortSpaces() {
-        Flat[] sortFlts = new Flat[getSpaces()];
+    public Space[] sortSpaces() {
+        Space[] sortFlts = new Flat[getSpaces()];
         int counter = 0;
 
         for (int i = 0; i < size; i++ ) {
@@ -143,7 +142,7 @@ public class Dwelling implements Building, Serializable, Cloneable {
         for(int i = sortFlts.length - 1 ; i > 0 ; i--){
             for(int j = 0 ; j < i ; j++) {
                 if(sortFlts[j].getSquare() > sortFlts[j + 1].getSquare()){
-                    Flat tmp = sortFlts[j];
+                    Space tmp = sortFlts[j];
                     sortFlts[j] = sortFlts[j + 1];
                     sortFlts[j + 1] = tmp;
                 }
@@ -198,9 +197,6 @@ public class Dwelling implements Building, Serializable, Cloneable {
         return clone;
     }
 
-    public String getClassName(){
-        return "Dwelling";
-    }
 
     public Floor[] toArray() {
         Floor[] dwellingFloorsCopy = new Floor[dwellingFloors.length];

@@ -2,18 +2,16 @@ package interfaces;
 
 import java.util.Iterator;
 
-public interface Floor {
-    public int getSize();
-    public int getSquare();
-    public int getRooms();
-    public Space[] getArraySpaces();
-    public Space getSpace(int number);
-    public void setSpace(int index, Space newSpace);
-    public void addSpace(int index, Space newSpace);
-    public void deleteSpace(int index);
-    public Space getBestSpace();
-    public Object clone() throws CloneNotSupportedException;
-    public String getClassName();
+public interface Floor extends Comparable<Floor> {
+    int getSize();
+    double getSquare();
+    int getRooms();
+    Space[] getArraySpaces();
+    Space getSpace(int number);
+    void setSpace(int index, Space newSpace);
+    void addSpace(int index, Space newSpace);
+    void deleteSpace(int index);
+    Space getBestSpace();
+    Object clone() throws CloneNotSupportedException;
     Iterator<Space> iterator();
-    int compareTo(Floor o);
 }

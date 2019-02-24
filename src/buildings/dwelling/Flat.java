@@ -5,10 +5,11 @@ import interfaces.Space;
 import java.io.Serializable;
 
 public class Flat implements Space, Serializable, Cloneable {
-    private static final int DEFAULT_SQUARE = 50;
+
+    private static final double DEFAULT_SQUARE = 50;
     private static final int DEFAULT_COUNT_ROOMS = 2;
 
-    private int square;
+    private double square;
     private int countRoom;
 
     //конструктор по умолчанию
@@ -17,18 +18,18 @@ public class Flat implements Space, Serializable, Cloneable {
     }
 
     //конструктор, принимающий площадь квартиры
-    public Flat(int square){
+    public Flat(double square){
         this(DEFAULT_COUNT_ROOMS, square);
     }
 
     //конструктор, принимающий площадь и количество комнат квартиры
-    public Flat(int square, int countOfRoom){
-        this.square = square;
+    public Flat(int countOfRoom, double square){
         this.countRoom = countOfRoom;
+        this.square = square;
     }
 
     //метод получения площади квартиры
-    public int getSquare() {
+    public double getSquare() {
         return square;
     }
 
@@ -38,7 +39,7 @@ public class Flat implements Space, Serializable, Cloneable {
     }
 
     //метод изменения площади квартиры
-    public void setSquare(int sqare) {
+    public void setSquare(double sqare) {
         this.square = sqare;
     }
 
@@ -70,14 +71,18 @@ public class Flat implements Space, Serializable, Cloneable {
         return countRoom ^ (int) Double.doubleToLongBits(square) >> 32 ^ (int) Double.doubleToLongBits(square);
     }
 
-
     //todo не надо отлавливать CloneNotSupportedException здесь, прописывай это исключение в сигнатуре метода, +++
     @Override
     public Object clone() throws CloneNotSupportedException {
         return super.clone();
     }
 
-    public String getClassName(){
-        return "Flat";
+    @Override
+    public int compareTo(Space o) {
+        if (o instanceof Flat) {
+            Flat flat = (Flat) o;
+            return Double.compare(square, flat.getSquare());
+        }
+        return Integer.MIN_VALUE;
     }
 }

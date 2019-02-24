@@ -7,10 +7,10 @@ import java.io.Serializable;
 public class Office implements Space, Serializable, Cloneable {
 
     private static final int DEFAULT_COUNT_ROOMS = 1;
-    private static final int DEFAULT_SQUARE = 250;
+    private static final double DEFAULT_SQUARE = 250;
 
     private int countOfRooms;
-    private int square;
+    private double square;
 
     //конструктор по умолчанию
     public Office(){
@@ -18,12 +18,12 @@ public class Office implements Space, Serializable, Cloneable {
     }
 
     //конструктор принимает площадь офиса
-    public Office(int squareOfOffice){
+    public Office(double squareOfOffice){
         this(DEFAULT_COUNT_ROOMS, squareOfOffice);
     }
 
     //конструктор принимает площадь офиса и количество комнат
-    public Office(int square, int countOfRooms){
+    public Office(int countOfRooms, double square){
         this.countOfRooms = countOfRooms;
         this.square = square;
     }
@@ -34,7 +34,7 @@ public class Office implements Space, Serializable, Cloneable {
     }
 
     //метод получения площади офиса
-    public int getSquare() {
+    public double getSquare() {
         return square;
     }
 
@@ -44,7 +44,7 @@ public class Office implements Space, Serializable, Cloneable {
     }
 
     //метод изменения площади офиса
-    public void setSquare(int newSquare) {
+    public void setSquare(double newSquare) {
         this.square = newSquare;
     }
 
@@ -82,8 +82,12 @@ public class Office implements Space, Serializable, Cloneable {
         return super.clone();
     }
 
-    public String getClassName(){
-        return "Office";
+    @Override
+    public int compareTo(Space o) {
+        if (o instanceof Office) {
+            Office office = (Office) o;
+            return Double.compare(square, office.getSquare());
+        }
+        return Integer.MIN_VALUE;
     }
-
 }

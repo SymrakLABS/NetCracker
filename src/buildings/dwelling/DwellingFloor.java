@@ -9,11 +9,11 @@ import java.util.Iterator;
 
 public class DwellingFloor implements Floor, Cloneable, Serializable {
 
-    Flat[] flats;
+    private Space[] flats;
     private int size;
 
     //конструктор, принимающий массив квартир этажа
-    public DwellingFloor(Flat[] flats) {
+    public DwellingFloor(Space[] flats) {
         this.flats = flats;
         size = flats.length;
     }
@@ -37,7 +37,7 @@ public class DwellingFloor implements Floor, Cloneable, Serializable {
     }
 
     //метод получения общей площади квартир этажа
-    public int getSquare() {
+    public double getSquare() {
         int allSquare = 0;
         for (int i = 0; i < size; i++) {
             allSquare += flats[i].getSquare();
@@ -55,12 +55,12 @@ public class DwellingFloor implements Floor, Cloneable, Serializable {
     }
 
     //метод получения массива квартир этажа
-    public Flat[] getArraySpaces() {
+    public Space[] getArraySpaces() {
         return flats;
     }
 
     //метод получения объекта квартиры, по ее номеру на этаже
-    public Flat getSpace(int number) {
+    public Space getSpace(int number) {
         return flats[number];
     }
 
@@ -93,8 +93,8 @@ public class DwellingFloor implements Floor, Cloneable, Serializable {
     }
 
     //метод получения самой большой по площади квартиры этажа
-    public Flat getBestSpace() {
-        int maxSquare = 0;
+    public Space getBestSpace() {
+        double maxSquare = 0;
         for(int i = 0; i < size; i++){
             if(flats[i].getSquare() > maxSquare){
                 maxSquare = flats[i].getSquare();

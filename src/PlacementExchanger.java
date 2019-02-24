@@ -47,8 +47,4 @@ public class PlacementExchanger {
             building2.setFloor(index2, temp);
         }
     }
-
-
-
-
 }

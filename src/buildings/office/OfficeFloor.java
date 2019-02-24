@@ -9,78 +9,66 @@ import java.util.Iterator;
 
 public class OfficeFloor implements Floor, Serializable, Cloneable {
 
-    private static class Node implements Serializable{
-        Node next;
-        Space office;
-
-        Node(Space space, Node next){
-            this.next = next;
-            this.office = space;
-        }
-    }
-
-    private Node head;
-    private Node tail;
+    private Node<Space> head = new Node<>();
+    private Node<Space> tail;
     private int size;
-
-    private void betrayTail() {
-        if (head != null && head.next != null) {
-            Node current = head;
-            while (current.next != head) {
-                current = current.next;
-
-            }
-            tail = current;
-        }
-    }
 
     //конструктор может принимать количество офисов на этаже
     public OfficeFloor(int countOfOffices) {
-        head = new Node(null, null);
+        head.next = head;
+        tail = head.next;
     }
 
     //конструктор может принимать массив офисов этажа
     public OfficeFloor(Space[] offices) {
-        head = new Node(null, head);
-        tail = head;
+        head.next = head;
+        tail = head.next;
         for (int i = 0; i < offices.length; i++) {
-            tail.next = new Node(offices[i], head);
-            size++;
-            betrayTail();
+            if (offices[i] != null) {
+                Node<Space> newNode = new Node<>(offices[i]);
+                newNode.next = head;
+                tail.next = newNode;
+                tail = newNode;
+                size++;
+            }
         }
     }
 
     //метод получения узла по его номеру
-    private Node getNode(int index) {
+    private Node<Space> getNode(int index) {
         checkIndex(index);
-        if(head != null) {
-            Node current = head.next;
-            int j = 0;
-            while (current != head) {
-                if (j++ == index) {
-                    return current;
-                }
-                current = current.next;
-            }
+        int numberOfNode = 0;
+        Node<Space> currentNode = head.next;
+        while(numberOfNode != index){
+            currentNode = currentNode.next;
+            numberOfNode++;
         }
-        return null;
+        return currentNode;
     }
 
     //метод добавления узла в список по номеру
-    private void addNode(Node node, int index) {
+    private void addNode(int index, Space newOffice) {
         checkIndex(index);
-        if (index == 0 || (head == null)) {
-            if (head == null) {
-                head = new Node(null, null);
-                head.next = new Node(node.office, head);
+        Node<Space> newNode = new Node<>(newOffice);
+        if(index == size) {
+            tail.next = newNode;
+            newNode.next = head;
+            tail = newNode;
+            size++;
+        }  else {
+            if (index >= 1) {
+                Node<Space> previousNode = getNode(index - 1);
+                Node<Space> currentNode = previousNode.next;
+                previousNode.next = newNode;
+                newNode.next = currentNode;
+                size++;
+            } else {
+                if(index == 0) {
+                    newNode.next = head.next;
+                    head.next = newNode;
+                    size++;
+                }
             }
-            else {
-                head.next = new Node(node.office, head.next);
-            }
-        }
-        else {
-            Node current = this.getNode(index - 1);
-            current.next = new Node(node.office, current.next);
         }
     }
 
@@ -88,17 +76,13 @@ public class OfficeFloor implements Floor, Serializable, Cloneable {
     //метод удаления узла из списка по его номеру
     private void removeNode(int index) {
         checkIndex(index);
-        if (head != null) {
-            if (index != 0) {
-                Node current = getNode(index - 1);
-                current.next = current.next.next;
-            }
-            else if (head.next.next == head){
-                head.next = head;
-            }
-            else {
-                Node current = head.next;
-                head.next = current.next;
+        if(index >= 1) {
+            Node<Space> previousNode = getNode(index - 1);
+            Node<Space> currentNode = previousNode.next;
+            previousNode.next = currentNode.next;
+        } else {
+            if (index == 0) {
+                head.next = head.next.next;
             }
         }
     }
@@ -109,34 +93,34 @@ public class OfficeFloor implements Floor, Serializable, Cloneable {
     }
 
     //метод получения общей площади помещений этажа
-    public int getSquare() {
-        int result = 0;
-        Node current = head;
-        do{
-            current = current.next;
-            result += current.office.getSquare();
-        } while (current.next != head);
-        return result;
+    public double getSquare() {
+        Node<Space> currentNode = head.next;
+        double sum = currentNode.data.getSquare();
+        while (currentNode.next != head) {
+            currentNode = currentNode.next;
+            sum += currentNode.data.getSquare();
+        }
+        return sum;
     }
 
     //метод получения общего количества комнат этажа
     public int getRooms() {
-        int result = 0;
-        Node current = head;
-        do{
-            current = current.next;
-            result += current.office.getRooms();
-        } while (current.next != head);
-        return result;
+        Node<Space> currentNode = head.next;
+        int countRooms = currentNode.data.getRooms();
+        while (currentNode.next != head) {
+            currentNode = currentNode.next;
+            countRooms += currentNode.data.getRooms();
+        }
+        return countRooms;
     }
 
     //метод получения массива офисов этажа
     public Space[] getArraySpaces() {
-        Space offices[] = new Space[getSize()];
-        Node current = head;
-        for (int i = 0; i < size; i++) {
-            current = current.next;
-            offices[i] = current.office;
+        Space[] offices = new Space[size];
+        Node<Space> tmp = head.next;
+        for (int i = 0; i < offices.length; i++) {
+            offices[i] = tmp.data;
+            tmp = tmp.next;
         }
         return offices;
     }
@@ -150,40 +134,36 @@ public class OfficeFloor implements Floor, Serializable, Cloneable {
 
     //метод получения офиса по его номеру на этаже
     public Space getSpace(int index) {
-        return getNode(index).office;
+        checkIndex(index);
+        return getNode(index).data;
     }
 
     //метод изменения офиса по его номеру на этаже и ссылке на обновленный офис
     public void setSpace(int index, Space newOffice) {
-        getNode(index).office = newOffice;
+        getNode(index).data = newOffice;
     }
 
     //метод добавления нового офиса на этаже по будущему номеру офиса
     public void addSpace(int index, Space newOffice) {
-        addNode(new Node(newOffice,null), index);
-        size++;
+        addNode(index, newOffice);
     }
 
     //метод удаления офиса по его номеру на этаже
     public void deleteSpace(int index) {
         removeNode(index);
-        size--;
     }
 
     //метод получения самого большого по площади офиса
     public Space getBestSpace() {
-        int bestSpace = 0;
-        Space officeBestSpace = null;
-        Node current = head;
-        for (int i = 0; i < size; i++) {
-            current = current.next;
-            if(current.office.getSquare() > bestSpace) {
-                bestSpace = current.office.getSquare();
-                officeBestSpace = current.office;
+        Node<Space> bestOffice = head.next;
+        Node<Space> currentOffice = bestOffice.next;
+        while (currentOffice.next != head) {
+            if (currentOffice.data.getSquare() > bestOffice.data.getSquare()) {
+                bestOffice = currentOffice;
             }
+            currentOffice = currentOffice.next;
         }
-        return officeBestSpace;
-
+        return bestOffice.data;
     }
 
     @Override
@@ -193,7 +173,7 @@ public class OfficeFloor implements Floor, Serializable, Cloneable {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("OfficeFloor (").append(size);
         for (int i = 0; i < size; i++) {
-            stringBuilder.append(", ").append(getNode(i).office);
+            stringBuilder.append(", ").append(getNode(i).data);
         }
         stringBuilder.append(")");
         return stringBuilder.toString();
@@ -212,7 +192,7 @@ public class OfficeFloor implements Floor, Serializable, Cloneable {
             return false;
         }
         for (int i = 0; i < size; i++) {
-            if (!officeFloor.getNode(i).office.equals(getNode(i).office)) {
+            if (!officeFloor.getNode(i).data.equals(getNode(i).data)) {
                 return false;
             }
         }
@@ -224,7 +204,7 @@ public class OfficeFloor implements Floor, Serializable, Cloneable {
         //todo в вычислении хэшкода участвуют все элементы +++
         int hashCode = size;
         for (int i = 0; i < size; i++) {
-            hashCode ^= getNode(i).office.hashCode();
+            hashCode ^= getNode(i).data.hashCode();
         }
         return hashCode;
     }
@@ -244,11 +224,6 @@ public class OfficeFloor implements Floor, Serializable, Cloneable {
         return null;
     }
 
-    public String getClassName(){
-        return "OfficeFloor";
-    }
-
-
     @Override
     public int compareTo(Floor o) {
         if (o instanceof OfficeFloor) {
@@ -264,7 +239,7 @@ public class OfficeFloor implements Floor, Serializable, Cloneable {
     @Override
     public Iterator<Space> iterator() {
         return new Iterator<Space>() {
-            private Node currentNode = head.next;
+            private Node<Space> currentNode = head.next;
             @Override
             public boolean hasNext() {
                 return currentNode != head;
@@ -272,11 +247,10 @@ public class OfficeFloor implements Floor, Serializable, Cloneable {
 
             @Override
             public Space next() {
-                Space toReturn = currentNode.office;
+                Space toReturn = currentNode.data;
                 currentNode = currentNode.next;
                 return toReturn;
             }
         };
     }
-
 }

@@ -8,7 +8,7 @@ import interfaces.Space;
 
 public class Hotel extends Dwelling {
 
-    public Hotel(HotelFloor[] floors) {
+    public Hotel(Floor[] floors) {
         super(floors);
     }
 

@@ -10,7 +10,7 @@ public class HotelFloor extends DwellingFloor {
     private int stars;
 
 
-    public HotelFloor(Flat[] spaces) {
+    public HotelFloor(Space[] spaces) {
         super(spaces);
         this.stars = DEFAULT_STARS;
     }
@@ -28,6 +28,8 @@ public class HotelFloor extends DwellingFloor {
         this.stars = stars;
     }
 
+    
+    //super
     @Override
     public String toString() {
         Space[] spaces = toArray();

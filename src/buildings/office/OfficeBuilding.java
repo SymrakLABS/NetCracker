@@ -13,83 +13,71 @@ import java.util.function.Function;
 
 public class OfficeBuilding implements Building, Serializable, Cloneable {
 
-    private static class Node implements Serializable {
-        Node next;
-        Node previous;
-        Floor officeFloor;
-
-        Node(Floor officeFloor, Node next, Node previous){
-            this.next = next;
-            this.previous = previous;
-            this.officeFloor = officeFloor;
-        }
-    }
-
-    private Node head;
+    private Node<Floor> head = new Node<>();
+    private Node<Floor> tail;
     private int size;
 
     //конструктор принимает количество этажей и массив количества офисов по этажам
-    public OfficeBuilding(int countDwelling, int[] countOfficesOnFloor){
-        if(countDwelling >= 0){
-            this.size = countDwelling;
-            for (int i = 0; i < countDwelling; i++) {
-                this.addNode(i, new Node(new OfficeFloor(countOfficesOnFloor[i]), null, null));
+    public OfficeBuilding(int countOfficeFloors, int[] countOffices){
+        head.next = head;
+        head.prev = head;
+        if (countOfficeFloors == countOffices.length) {
+            for (int i = 0; i < countOffices.length; i++) {
+                addNode(i, new OfficeFloor(countOffices[i]));
             }
-        }
-        else {
-            throw new SpaceIndexOutOfBoundsException();
         }
     }
 
     //конструктор принимает массив этажей офисного здания
     public OfficeBuilding(Floor[] officeFloors){
-        this.size = officeFloors.length;
-        head = new Node(null, null, null);
         head.next = head;
-        head.previous = head;
-        Node current = head;
-        for (int i = 0; i < officeFloors.length ; i++) {
-            Node x = new Node(officeFloors[i], head.next, head.previous);
-            current.next = x;
-            x.previous = current;
-            x.officeFloor = officeFloors[i];
+        head.prev = head;
+        tail = head.next;
+        for (int i = 0; i < officeFloors.length; i++) {
+            if (officeFloors[i] != null) {
+                Node<Floor> newNode = new Node<>(officeFloors[i]);
+                newNode.next = head;
+                head.prev = newNode;
+                newNode.prev = tail;
+                tail.next = newNode;
+                tail = newNode;
+                size++;
+            }
         }
-        current.next = head.next;
-        head.next.previous = current;
     }
 
     //метод получения узла по его номеру
-    private Node getNode(int index) {
+    private Node<Floor> getNode(int index) {
         checkIndex(index); //todo просто вызываю
-        if(head != null) {
-            Node current = head.next;
-            int j = 0;
-            while (current != head) {
-                if (j++ == index) {
-                    return current;
-                }
-                current = current.next;
-            }
+        Node<Floor> currentNode = head.next;
+        int countNode = 0;
+        while (countNode != index) {
+            currentNode = currentNode.next;
+            countNode++;
         }
-        return null;
+        return currentNode;
     }
 
     //метод добавления узла в список по номеру
-    private void addNode(int index, Node newNode){
+    private void addNode(int index, Floor newOfficeFloor) {
         checkIndex(index);
-        if (index == 0 || (head == null)) {
-            if (head == null) {
-                head = new Node(null, null, null);
-                head.next = new Node(newNode.officeFloor, head, head);
-                head.previous = head.next;
+        Node<Floor> newNode = new Node<>(newOfficeFloor);
+        if (index == size) {
+            newNode.prev = head.prev;
+            head.prev.next = newNode;
+            newNode.next = head;
+            head.prev = newNode;
+            size++;
+        } else {
+            if (index < size) {
+                Node<Floor> currentNode;
+                currentNode = getNode(index);
+                newNode.prev = currentNode.prev;
+                currentNode.prev.next = newNode;
+                newNode.next = currentNode;
+                currentNode.prev = newNode;
+                size++;
             }
-            else {
-                head.next = new Node(newNode.officeFloor, head.next, head);
-            }
-        }
-        else {
-            Node current = this.getNode(index - 1);
-            current.next = new Node(newNode.officeFloor, current.next, current.previous);
         }
     }
 
@@ -97,22 +85,11 @@ public class OfficeBuilding implements Building, Serializable, Cloneable {
     //метод удаления узла из списка по его номеру
     private void removeNode(int index){
         checkIndex(index);
-        if (head != null) {
-            if (index != 0) {
-                Node current = getNode(index - 1);
-                current.next = current.next.next;
-                current.next.previous = current;
-            }
-            else if (head.next.next == head){
-                head.next = head;
-                head.previous = head;
-            }
-            else {
-                Node current = head.next;
-                head.next = current.next;
-                head.next.previous = head;
-            }
-        }
+        Node<Floor> currentNode;
+        currentNode = getNode(index);
+        currentNode.prev.next = currentNode.next;
+        currentNode.next.prev = currentNode.prev;
+        size--;
     }
 
 
@@ -122,12 +99,12 @@ public class OfficeBuilding implements Building, Serializable, Cloneable {
     }
 
     //вспомогательный метод поиска количества оффисов, площади и количества комнат
-    public int findParameter(Function<Floor, Integer> function){
-        int param = 0;
-        Node current = head;
+    public double findParameter(Function<Floor, Double> function){
+        double param = 0;
+        Node<Floor> current = head;
         do {
             current = current.next;
-            param += function.apply(current.officeFloor);
+            param += function.apply(current.data);
 
         } while (current.next != head);
         return param;
@@ -135,31 +112,31 @@ public class OfficeBuilding implements Building, Serializable, Cloneable {
 
     //метод получения количества оффисов здания
     public int getSpaces() {
-        return findParameter(new Function<Floor, Integer>() {
+        return (int) findParameter(new Function<Floor, Double>() {
             @Override
-            public Integer apply(Floor officeFloor) {
-                return officeFloor.getSize();
+            public Double apply(Floor officeFloor) {
+                return Double.valueOf(officeFloor.getSize());
             }
         });
     }
 
     //метод получения общей площади помещений здания
-    public int getSquare() {
+    public double getSquare() {
         return findParameter((p) -> p.getSquare() );
     }
 
     //метод получения общего количества комнат здания
     public int getRooms() {
-        return findParameter((p) -> p.getRooms());
+        return (int) findParameter((p) -> Double.valueOf(p.getRooms()));
     }
 
     //метод получения массива этажей офисного здания
     public Floor[] getArrayOfFloors() {
         Floor officeFloor[] = new Floor[size];
-        Node current = head;
+        Node<Floor> current = head;
         for (int i = 0; i < size; i++) {
             current = current.next;
-            officeFloor[i] = current.officeFloor;
+            officeFloor[i] = current.data;
         }
         return officeFloor;
     }
@@ -173,12 +150,12 @@ public class OfficeBuilding implements Building, Serializable, Cloneable {
 
     //метод получения объекта этажа, по его номеру в здании
     public Floor getFloor(int index) {
-        return getNode(index).officeFloor;
+        return getNode(index).data;
     }
 
     //метод изменения этажа по его номеру в здании и ссылке на обновленный этаж
     public void setFloor(int index, Floor newOfficeFloor) {
-        getNode(index).officeFloor = newOfficeFloor;
+        getNode(index).data = newOfficeFloor;
     }
 
     //метод получения объекта офиса по его номеру в офисном здании
@@ -250,17 +227,14 @@ public class OfficeBuilding implements Building, Serializable, Cloneable {
 
     //метод получения самого большого по площади офиса здания
     public Space getBestSpace() {
-        int bestSpace = 0;
-        Space officeBestSpace = null;
-        Node current = head;
-        for (int i = 1; i < size; i++) {
-            current = current.next;
-            if(current.officeFloor.getSquare() > bestSpace) { //saqare space
-                bestSpace = current.officeFloor.getSquare();
-                officeBestSpace = current.officeFloor.getBestSpace();
+        Space bestOffice = head.next.data.getBestSpace();
+        for (int i = 0; i < size; i++) {
+            Space tmp = getNode(i).data.getBestSpace();
+            if (tmp.getSquare() > bestOffice.getRooms()) {
+                bestOffice = tmp;
             }
         }
-        return officeBestSpace;
+        return bestOffice;
     }
 
     //метод получения отсортированного по убыванию площадей массива офисов
@@ -291,7 +265,7 @@ public class OfficeBuilding implements Building, Serializable, Cloneable {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("OfficeBuilding (").append(size);
         for (int i = 0; i < size; i++) {
-            stringBuilder.append(", ").append(getNode(i).officeFloor);
+            stringBuilder.append(", ").append(getNode(i).data); //iterator
         }
         stringBuilder.append(")");
         return stringBuilder.toString();
@@ -310,7 +284,7 @@ public class OfficeBuilding implements Building, Serializable, Cloneable {
             return false;
         }
         for (int i = 0; i < size; i++) {
-            if (!officeBuilding.getNode(i).officeFloor.equals(getNode(i).officeFloor)) {
+            if (!officeBuilding.getNode(i).data.equals(getNode(i).data)) {
                 return false;
             }
         }
@@ -322,7 +296,7 @@ public class OfficeBuilding implements Building, Serializable, Cloneable {
         //todo в вычислении хэшкода участвуют все элементы +++
         int hashCode = size;
         for (int i = 0; i < size; i++) {
-            hashCode ^= getNode(i).officeFloor.hashCode();
+            hashCode ^= getNode(i).data.hashCode();
         }
         return hashCode;
     }
@@ -345,8 +319,7 @@ public class OfficeBuilding implements Building, Serializable, Cloneable {
     @Override
     public Iterator<Floor> iterator() {
         return new Iterator<Floor>() {
-            private Node node = head.next;
-
+            private Node<Floor> node = head.next;
             @Override
             public boolean hasNext() {
                 return node != head;
@@ -354,7 +327,7 @@ public class OfficeBuilding implements Building, Serializable, Cloneable {
 
             @Override
             public Floor next() {
-                Floor toReturn = node.officeFloor;
+                Floor toReturn = node.data;
                 node = node.next;
                 return toReturn;
             }
